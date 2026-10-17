@@ -1,0 +1,19 @@
+# Firebase & Secrets
+firebase_options.dart
+.env
+*.env
+google-services.json
+GoogleService-Info.plist
+**/secrets/
+**/*.key
+
+# macOS
+.DS_Store
+
+# Node
+node_modules/
+
+# Flutter / Dart
+.dart_tool/
+.packages
+build/

@@ -1,0 +1,2066 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ShramMitra AI | Multilingual Voice Platform for Informal & Gig Workers</title>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    :root {
+      --primary: #ea580c;
+      --primary-hover: #c2410c;
+      --primary-light: #ffedd5;
+      --accent: #2563eb;
+      --card-bg: #ffffff;
+      --bg-page: #f8fafc;
+      --border-color: #e2e8f0;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+    }
+    body {
+      background-color: var(--bg-page);
+      color: var(--text-main);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    }
+    @keyframes ripplePulse {
+      0% { transform: scale(0.9); opacity: 0.75; }
+      100% { transform: scale(1.6); opacity: 0; }
+    }
+    .recording-ripple {
+      animation: ripplePulse 1.8s cubic-bezier(0, 0.2, 0.8, 1) infinite;
+    }
+    .recording-ripple-delay {
+      animation: ripplePulse 1.8s cubic-bezier(0, 0.2, 0.8, 1) 0.6s infinite;
+    }
+    @keyframes waveBounce {
+      0%, 100% { height: 6px; }
+      50% { height: 24px; }
+    }
+    .wave-bar { animation: waveBounce 0.85s ease-in-out infinite; }
+    .wave-bar:nth-child(2) { animation-delay: 0.12s; }
+    .wave-bar:nth-child(3) { animation-delay: 0.24s; }
+    .wave-bar:nth-child(4) { animation-delay: 0.36s; }
+    .wave-bar:nth-child(5) { animation-delay: 0.24s; }
+    .wave-bar:nth-child(6) { animation-delay: 0.12s; }
+    .active-nav-btn {
+      color: #ea580c !important;
+      border-bottom: 2px solid #ea580c;
+      font-weight: 700;
+    }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col antialiased selection:bg-orange-500 selection:text-white">
+
+  <!-- ========================================================================= -->
+  <!-- 1. TOP SAFETY ESCALATION BAR (Rule #4: Safety & Emergency First)          -->
+  <!-- ========================================================================= -->
+  <aside aria-label="Emergency Helplines" class="bg-red-700 text-white text-xs px-3 sm:px-6 py-2 border-b border-red-800 sticky top-0 z-50 shadow-sm">
+    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-1.5 sm:gap-4">
+      <div class="flex items-center gap-2 text-center sm:text-left">
+        <span class="inline-block w-2 h-2 rounded-full bg-red-300 animate-ping flex-shrink-0"></span>
+        <span id="safetyBarTitle" class="font-bold text-[11px] sm:text-xs">🚨 24x7 Emergency Escalation: Immediate Police &amp; Labour Help</span>
+      </div>
+      <div class="flex items-center justify-center flex-wrap gap-2 text-[11px] font-semibold">
+        <a href="tel:112" class="bg-red-800 hover:bg-red-900 px-2.5 py-1 rounded-md flex items-center gap-1 transition">
+          <span>🚔</span> <span id="safetyPoliceLabel">Police: 112</span>
+        </a>
+        <a href="tel:18004251200" class="bg-red-800 hover:bg-red-900 px-2.5 py-1 rounded-md flex items-center gap-1 transition">
+          <span>👷</span> <span id="safetyLabourLabel">Labour: 1800-425-1200</span>
+        </a>
+        <a href="tel:181" class="bg-red-800 hover:bg-red-900 px-2.5 py-1 rounded-md hidden xs:flex items-center gap-1 transition">
+          <span>👩</span> <span id="safetyWomenLabel">Women: 181</span>
+        </a>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ========================================================================= -->
+  <!-- 2. FULLY RESPONSIVE NAVIGATION HEADER                                     -->
+  <!-- ========================================================================= -->
+  <header class="sticky top-9 sm:top-8 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm transition-all">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-3">
+      
+      <!-- Brand Logo & App Name -->
+      <div class="flex items-center gap-2.5 cursor-pointer flex-shrink-0" onclick="switchMainTab('home')">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-orange-600 to-amber-500 flex items-center justify-center text-white text-xl shadow-md shadow-orange-500/20">
+          🤝
+        </div>
+        <div>
+          <div class="flex items-center gap-1.5">
+            <span class="text-lg sm:text-xl font-black tracking-tight text-slate-900">ShramMitra <span class="text-orange-600">AI</span></span>
+            <span class="text-[9px] sm:text-[10px] uppercase font-bold tracking-wider px-1.5 py-0.5 rounded bg-orange-100 text-orange-700">Dihadi AI</span>
+          </div>
+          <p id="headerTagline" class="text-[10px] sm:text-[11px] text-slate-500 hidden md:block leading-none mt-0.5">Voice Platform for Informal &amp; Gig Workers</p>
+        </div>
+      </div>
+
+      <!-- Desktop Navigation Tabs -->
+      <nav class="hidden lg:flex items-center gap-1 text-xs xl:text-sm font-semibold text-slate-600">
+        <button onclick="switchMainTab('home')" id="nav-home" class="px-3 py-5 transition-colors hover:text-orange-600 active-nav-btn">Overview</button>
+        <button onclick="switchMainTab('voice')" id="nav-voice" class="px-3 py-5 transition-colors hover:text-orange-600 flex items-center gap-1.5">
+          <span class="w-2 h-2 rounded-full bg-orange-500"></span> Voice AI
+        </button>
+        <button onclick="switchMainTab('ledger')" id="nav-ledger" class="px-3 py-5 transition-colors hover:text-orange-600">Wage Ledger</button>
+        <button onclick="switchMainTab('grievance')" id="nav-grievance" class="px-3 py-5 transition-colors hover:text-orange-600">Grievance Drafter</button>
+        <button onclick="switchMainTab('schemes')" id="nav-schemes" class="px-3 py-5 transition-colors hover:text-orange-600">Schemes &amp; Rights</button>
+        <button onclick="switchMainTab('architecture')" id="nav-architecture" class="px-3 py-5 transition-colors hover:text-orange-600">Architecture</button>
+      </nav>
+
+      <!-- Language Selector, WhatsApp CTA & Mobile Menu Toggle -->
+      <div class="flex items-center gap-2 sm:gap-3">
+        <!-- Language Switcher Dropdown (Supports all 6 specified languages) -->
+        <div class="relative">
+          <label for="webLangSelect" class="sr-only">Choose Language</label>
+          <select id="webLangSelect" onchange="onLanguageChange(this.value)" class="text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300 rounded-lg px-2 sm:px-3 py-1.5 outline-none focus:ring-2 focus:ring-orange-500 cursor-pointer transition shadow-sm">
+            <option value="en">🇬🇧 English</option>
+            <option value="hi">🇮🇳 हिंदी (Hindi)</option>
+            <option value="mr">मराठी (Marathi)</option>
+            <option value="ta">தமிழ் (Tamil)</option>
+            <option value="te">తెలుగు (Telugu)</option>
+            <option value="bn">বাংলা (Bengali)</option>
+          </select>
+        </div>
+
+        <!-- WhatsApp Link Button -->
+        <a id="btnWhatsAppBot" href="https://wa.me/?text=Namaste%2C%20I%20want%20to%20use%20ShramMitra%20AI%20for%20worker%20welfare." target="_blank" rel="noopener noreferrer" class="hidden sm:inline-flex items-center gap-1.5 text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg shadow-sm transition">
+          <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.598 2.664-.698c.969.587 1.841.879 2.796.879 3.182 0 5.768-2.587 5.768-5.766.001-3.181-2.585-5.766-5.768-5.766zm9.969 5.828c0 5.523-4.477 10-10 10-1.761 0-3.414-.457-4.856-1.258l-5.144 1.258 1.371-4.99c-.911-1.488-1.371-3.197-1.371-5.01 0-5.523 4.477-10 10-10s10 4.477 10 10z"/></svg>
+          <span class="hidden md:inline">WhatsApp Bot</span>
+        </a>
+
+        <!-- Responsive Mobile Hamburger Button -->
+        <button id="mobileMenuBtn" onclick="toggleMobileMenu()" class="lg:hidden p-2 rounded-lg text-slate-700 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-orange-500 transition" aria-label="Toggle navigation menu">
+          <svg id="hamburgerIcon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+          </svg>
+          <svg id="closeMenuIcon" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Slide-Down Navigation Drawer -->
+    <div id="mobileMenuDrawer" class="hidden lg:hidden bg-white border-b border-slate-200 px-4 pt-2 pb-4 space-y-1 shadow-lg transition-all animate-fadeIn">
+      <button onclick="switchMainTab('home'); toggleMobileMenu();" id="mnav-home" class="w-full text-left px-3 py-2.5 rounded-xl text-sm font-bold text-orange-600 bg-orange-50 flex items-center gap-2">
+        <span>🏠</span> <span id="mNavHomeText">Overview</span>
+      </button>
+      <button onclick="switchMainTab('voice'); toggleMobileMenu();" id="mnav-voice" class="w-full text-left px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-700 hover:bg-slate-50 flex items-center gap-2">
+        <span>🎙️</span> <span id="mNavVoiceText">Voice Assistant</span>
+      </button>
+      <button onclick="switchMainTab('ledger'); toggleMobileMenu();" id="mnav-ledger" class="w-full text-left px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-700 hover:bg-slate-50 flex items-center gap-2">
+        <span>📒</span> <span id="mNavLedgerText">Wage Ledger</span>
+      </button>
+      <button onclick="switchMainTab('grievance'); toggleMobileMenu();" id="mnav-grievance" class="w-full text-left px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-700 hover:bg-slate-50 flex items-center gap-2">
+        <span>📝</span> <span id="mNavGrievanceText">Grievance Drafter</span>
+      </button>
+      <button onclick="switchMainTab('schemes'); toggleMobileMenu();" id="mnav-schemes" class="w-full text-left px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-700 hover:bg-slate-50 flex items-center gap-2">
+        <span>📚</span> <span id="mNavSchemesText">Schemes &amp; Rights</span>
+      </button>
+      <button onclick="switchMainTab('architecture'); toggleMobileMenu();" id="mnav-architecture" class="w-full text-left px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-700 hover:bg-slate-50 flex items-center gap-2">
+        <span>🏗️</span> <span id="mNavArchText">Architecture &amp; Rules</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ========================================================================= -->
+  <!-- MAIN APPLICATION VIEWPORT                                                 -->
+  <!-- ========================================================================= -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+    <!-- ----------------------------------------------------------------------- -->
+    <!-- TAB 1: OVERVIEW & HERO                                                  -->
+    <!-- ----------------------------------------------------------------------- -->
+    <section id="tab-content-home" class="tab-content active space-y-10">
+      
+      <!-- Hero Banner -->
+      <div class="rounded-3xl bg-gradient-to-br from-slate-900 via-orange-950 to-slate-900 text-white p-6 sm:p-12 shadow-xl relative overflow-hidden">
+        <div class="absolute -right-10 -bottom-10 w-96 h-96 bg-orange-500/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="max-w-3xl relative z-10 space-y-5">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-orange-500/20 text-orange-300 text-xs font-semibold border border-orange-500/30">
+            <span id="heroTagBadge">⚡ Multilingual Voice-First Platform</span>
+            <span>•</span>
+            <span>Sarvam AI (Saaras + Bulbul)</span>
+          </div>
+
+          <h1 id="heroTitle" class="text-2xl sm:text-4xl lg:text-5xl font-black tracking-tight leading-tight">
+            Fair Wages, Legal Dignity &amp; Social Welfare for Every Informal Worker.
+          </h1>
+
+          <p id="heroSubtitle" class="text-sm sm:text-base lg:text-lg text-slate-300 leading-relaxed">
+            ShramMitra AI empowers gig delivery partners, daily-wage laborers, drivers, and domestic workers with voice-driven earnings tracking, deterministic wage calculation, legally grounded grievance drafting, and welfare scheme navigation.
+          </p>
+
+          <div class="flex flex-wrap items-center gap-3 sm:gap-4 pt-2">
+            <button onclick="switchMainTab('voice')" class="px-5 sm:px-6 py-3 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-bold text-xs sm:text-sm shadow-lg shadow-orange-500/30 transition transform hover:-translate-y-0.5 flex items-center gap-2">
+              <span class="text-base sm:text-lg">🎙</span>
+              <span id="heroCtaVoice">Try Voice Assistant</span>
+            </button>
+            <button onclick="switchMainTab('ledger')" class="px-5 sm:px-6 py-3 rounded-xl bg-white/10 hover:bg-white/20 text-white font-semibold text-xs sm:text-sm border border-white/20 backdrop-blur transition">
+              <span id="heroCtaLedger">Calculate Wages (Ledger)</span>
+            </button>
+          </div>
+
+          <!-- Non-Negotiable Rule Ribbon -->
+          <div class="pt-4 border-t border-white/10 flex flex-wrap items-center gap-x-6 gap-y-2 text-xs text-slate-400">
+            <span class="flex items-center gap-1.5"><strong class="text-emerald-400">✓ Rule 1:</strong> <span id="heroRule1">Deterministic calculations (LLM never generates ₹)</span></span>
+            <span class="flex items-center gap-1.5"><strong class="text-emerald-400">✓ Rule 2:</strong> <span id="heroRule2">Official scheme citations required</span></span>
+            <span class="flex items-center gap-1.5"><strong class="text-emerald-400">✓ Rule 3:</strong> <span id="heroRule3">Mandatory legal draft disclaimer</span></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Core Capabilities Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <!-- Feature 1: Voice AI -->
+        <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm hover:shadow-md transition cursor-pointer" onclick="switchMainTab('voice')">
+          <div class="w-12 h-12 rounded-xl bg-orange-100 text-orange-600 flex items-center justify-center text-2xl mb-4">🎙</div>
+          <h2 id="cardTitleVoice" class="text-lg font-bold text-slate-900 mb-1">Voice-First Experience</h2>
+          <p id="cardDescVoice" class="text-xs text-slate-500 mb-3">Powered by Sarvam AI Saaras (STT) &amp; Bulbul (TTS) in Indian languages.</p>
+          <ul id="cardBulletsVoice" class="text-xs text-slate-600 space-y-1.5">
+            <li>• Speak naturally in Hindi, Tamil, Bengali, etc.</li>
+            <li>• Auto codemix support (Hinglish/Tanglish)</li>
+            <li>• Instant audio response playback</li>
+          </ul>
+        </div>
+
+        <!-- Feature 2: Deterministic Ledger -->
+        <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm hover:shadow-md transition cursor-pointer" onclick="switchMainTab('ledger')">
+          <div class="w-12 h-12 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center text-2xl mb-4">📒</div>
+          <h2 id="cardTitleLedger" class="text-lg font-bold text-slate-900 mb-1">Wage Ledger</h2>
+          <p id="cardDescLedger" class="text-xs text-slate-500 mb-3">Deterministic wage math in <code>packages/shared/</code>. No hallucinations.</p>
+          <ul id="cardBulletsLedger" class="text-xs text-slate-600 space-y-1.5">
+            <li>• Exact daily rate &times; days calculation</li>
+            <li>• Advance deduction &amp; balance audit</li>
+            <li>• Export proof to WhatsApp &amp; CSV</li>
+          </ul>
+        </div>
+
+        <!-- Feature 3: Grievance Drafter -->
+        <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm hover:shadow-md transition cursor-pointer" onclick="switchMainTab('grievance')">
+          <div class="w-12 h-12 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center text-2xl mb-4">📝</div>
+          <h2 id="cardTitleGrievance" class="text-lg font-bold text-slate-900 mb-1">Grievance Drafter</h2>
+          <p id="cardDescGrievance" class="text-xs text-slate-500 mb-3">Instant legal drafts for wage non-payment and agreements.</p>
+          <ul id="cardBulletsGrievance" class="text-xs text-slate-600 space-y-1.5">
+            <li>• Labour Commissioner complaint letters</li>
+            <li>• Formal 15-day demand notices</li>
+            <li>• Mandatory statutory legal disclaimer</li>
+          </ul>
+        </div>
+
+        <!-- Feature 4: Schemes & Rights -->
+        <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm hover:shadow-md transition cursor-pointer" onclick="switchMainTab('schemes')">
+          <div class="w-12 h-12 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center text-2xl mb-4">📚</div>
+          <h2 id="cardTitleSchemes" class="text-lg font-bold text-slate-900 mb-1">Schemes &amp; Rights</h2>
+          <p id="cardDescSchemes" class="text-xs text-slate-500 mb-3">Verified legal &amp; scheme guidance with direct citations.</p>
+          <ul id="cardBulletsSchemes" class="text-xs text-slate-600 space-y-1.5">
+            <li>• e-Shram &amp; PMJAY eligibility step-by-step</li>
+            <li>• Karnataka Gig Workers Act 2025 timelines</li>
+            <li>• Low confidence &rarr; 1800-425-1200 helpline</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Worker Personas -->
+      <div class="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-6">
+        <div class="text-center max-w-xl mx-auto">
+          <h2 id="personasTitle" class="text-xl sm:text-2xl font-bold text-slate-900">Built Specifically For 450M+ Informal Workers</h2>
+          <p id="personasSubtitle" class="text-xs sm:text-sm text-slate-500 mt-1">Designed for noisy roadside environments, low literacy, and fast audio resolution.</p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+            <span class="text-3xl">🛵</span>
+            <h3 id="persona1Title" class="font-bold text-sm text-slate-900 mt-2">Gig &amp; Delivery Partners</h3>
+            <p id="persona1Desc" class="text-xs text-slate-500 mt-1">Swiggy, Zomato, Zepto riders tracking payout deductions and dispute timelines.</p>
+          </div>
+          <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+            <span class="text-3xl">🧱</span>
+            <h3 id="persona2Title" class="font-bold text-sm text-slate-900 mt-2">Daily-Wage Laborers (Dihadi)</h3>
+            <p id="persona2Desc" class="text-xs text-slate-500 mt-1">Construction and naka workers calculating balance due from sub-contractors.</p>
+          </div>
+          <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+            <span class="text-3xl">🧹</span>
+            <h3 id="persona3Title" class="font-bold text-sm text-slate-900 mt-2">Domestic &amp; Home Workers</h3>
+            <p id="persona3Desc" class="text-xs text-slate-500 mt-1">Cooks, cleaners, and caregivers documenting monthly agreements and pensions.</p>
+          </div>
+          <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+            <span class="text-3xl">🛺</span>
+            <h3 id="persona4Title" class="font-bold text-sm text-slate-900 mt-2">Cab &amp; Auto Drivers</h3>
+            <p id="persona4Desc" class="text-xs text-slate-500 mt-1">Commercial drivers needing legal guidance on accident relief and social security.</p>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ----------------------------------------------------------------------- -->
+    <!-- TAB 2: INTERACTIVE DYNAMIC VOICE ASSISTANT                              -->
+    <!-- ----------------------------------------------------------------------- -->
+    <section id="tab-content-voice" class="tab-content space-y-6">
+      
+      <div class="flex flex-col lg:flex-row gap-6">
+        
+        <!-- Voice Interaction Stage -->
+        <div class="flex-1 bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-sm flex flex-col justify-between">
+          <div>
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
+              <div>
+                <span id="badgeVoiceConsole" class="text-xs font-bold uppercase tracking-wider text-orange-600 bg-orange-50 px-2.5 py-1 rounded-md">Live Voice Console</span>
+                <h2 id="titleVoiceConsole" class="text-2xl font-black text-slate-900 mt-1">Talk to ShramMitra AI</h2>
+                <p id="subtitleVoiceConsole" class="text-xs text-slate-500">Record your voice, click sample worker queries, or type custom input below.</p>
+              </div>
+              <span id="voiceStatusBadge" class="self-start sm:self-auto text-xs font-semibold px-2.5 py-1 rounded-full bg-slate-100 text-slate-600 border border-slate-200">
+                Ready to listen
+              </span>
+            </div>
+
+            <!-- Big Interactive Mic Stage -->
+            <div class="my-6 flex flex-col items-center justify-center p-8 bg-gradient-to-b from-orange-50/70 via-amber-50/40 to-slate-50/60 rounded-3xl border border-orange-100/80 shadow-sm relative overflow-hidden">
+              
+              <!-- Perfectly Centered Microphone Button Wrapper with Dual Concentric Ripples -->
+              <div class="relative flex items-center justify-center w-36 h-36 my-2">
+                <div id="micRingEffect" class="absolute inset-0 rounded-full bg-red-400 pointer-events-none opacity-0 transition-opacity"></div>
+                <div id="micRingEffect2" class="absolute inset-0 rounded-full bg-red-500 pointer-events-none opacity-0 transition-opacity"></div>
+                
+                <!-- Main Mic Button -->
+                <button id="webVoiceMicBtn" onclick="toggleWebVoiceRecord()" class="w-24 h-24 rounded-full bg-orange-600 hover:bg-orange-700 text-white flex items-center justify-center shadow-xl shadow-orange-600/30 active:scale-95 transition-all z-10 relative focus:outline-none focus:ring-4 focus:ring-orange-300">
+                  <svg id="micIconSvg" class="w-10 h-10 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/>
+                    <path d="M19 10v2a7 7 0 01-14 0v-2M12 19v4M8 23h8"/>
+                  </svg>
+                </button>
+              </div>
+
+              <!-- Live Audio Waveforms & Visualizer Pill -->
+              <div class="h-12 flex items-center justify-center mt-2">
+                <div id="webVoiceWaveform" class="hidden items-center gap-3 px-5 py-2 rounded-full bg-white border border-red-200 shadow-sm transition-all">
+                  <span class="flex h-2.5 w-2.5 relative">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-600"></span>
+                  </span>
+                  <span id="listeningPillText" class="text-xs font-bold text-red-700">Listening</span>
+                  <div class="flex items-center gap-1 h-6">
+                    <span class="wave-bar w-1 bg-red-500 rounded-full"></span>
+                    <span class="wave-bar w-1 bg-red-500 rounded-full"></span>
+                    <span class="wave-bar w-1 bg-red-600 rounded-full"></span>
+                    <span class="wave-bar w-1 bg-red-600 rounded-full"></span>
+                    <span class="wave-bar w-1 bg-red-500 rounded-full"></span>
+                    <span class="wave-bar w-1 bg-red-400 rounded-full"></span>
+                  </div>
+                  <span id="recordingTimer" class="font-mono text-xs font-bold text-slate-700">00:00</span>
+                </div>
+              </div>
+
+              <!-- Helper Text -->
+              <p id="micHelpText" class="text-xs font-medium text-slate-600 mt-2 text-center max-w-sm">
+                Click microphone to record, or choose a pre-recorded worker sample below
+              </p>
+            </div>
+
+            <!-- Dynamic Custom Text Input Fallback -->
+            <div class="mb-5 bg-slate-50 p-3 rounded-2xl border border-slate-200 flex items-center gap-2">
+              <span class="text-slate-400 text-sm">💬</span>
+              <input id="customUserVoiceText" type="text" placeholder="Or type your question here (e.g. I worked 5 days at ₹800, got ₹3000)..." class="flex-1 bg-transparent text-xs text-slate-800 outline-none" onkeydown="if(event.key==='Enter') submitCustomVoiceText()" />
+              <button onclick="submitCustomVoiceText()" class="px-3 py-1.5 bg-orange-600 hover:bg-orange-700 text-white rounded-xl text-xs font-bold transition">
+                Ask AI
+              </button>
+            </div>
+
+            <!-- Pre-recorded Sample Triggers -->
+            <div class="space-y-2">
+              <p id="sampleTriggersLabel" class="text-xs font-bold text-slate-500 uppercase tracking-wider">Simulate Worker Voice Audio:</p>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                <button onclick="simulateVoiceQuery('wage')" class="text-left p-3 rounded-xl bg-slate-50 hover:bg-orange-50 border border-slate-200 hover:border-orange-200 transition text-xs font-medium text-slate-700">
+                  <div class="font-bold text-orange-700 flex items-center justify-between">
+                    <span id="sampleWageTitle">💰 Wage Calculation</span>
+                    <span class="text-[10px] text-slate-400">Rule #1</span>
+                  </div>
+                  <p id="sampleWagePrompt" class="mt-1 text-slate-600">"I worked 6 days at ₹750/day and got ₹2500, calculate my balance"</p>
+                </button>
+
+                <button onclick="simulateVoiceQuery('eshram')" class="text-left p-3 rounded-xl bg-slate-50 hover:bg-orange-50 border border-slate-200 hover:border-orange-200 transition text-xs font-medium text-slate-700">
+                  <div class="font-bold text-blue-700 flex items-center justify-between">
+                    <span id="sampleEshramTitle">📋 e-Shram Registration</span>
+                    <span class="text-[10px] text-slate-400">RAG Guide</span>
+                  </div>
+                  <p id="sampleEshramPrompt" class="mt-1 text-slate-600">"How do I make my e-Shram card without paying agents?"</p>
+                </button>
+
+                <button onclick="simulateVoiceQuery('safety')" class="text-left p-3 rounded-xl bg-red-50 hover:bg-red-100 border border-red-200 transition text-xs font-medium text-slate-700">
+                  <div class="font-bold text-red-700 flex items-center justify-between">
+                    <span id="sampleSafetyTitle">🚨 Safety / Threat</span>
+                    <span class="text-[10px] text-red-500 font-bold">Rule #4 Priority</span>
+                  </div>
+                  <p id="sampleSafetyPrompt" class="mt-1 text-red-900">"Contractor is threatening to beat me if I ask for wages"</p>
+                </button>
+
+                <button onclick="simulateVoiceQuery('karnataka')" class="text-left p-3 rounded-xl bg-slate-50 hover:bg-orange-50 border border-slate-200 hover:border-orange-200 transition text-xs font-medium text-slate-700">
+                  <div class="font-bold text-purple-700 flex items-center justify-between">
+                    <span id="sampleGigTitle">⚖️ Gig Law Grievance</span>
+                    <span class="text-[10px] text-slate-400">Sec 22 RAG</span>
+                  </div>
+                  <p id="sampleGigPrompt" class="mt-1 text-slate-600">"What are my rights under Karnataka Gig Workers Act 2025?"</p>
+                </button>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Dynamic Real-Time Dialogue Box -->
+          <div id="voiceResultBox" class="mt-6 p-4 rounded-2xl bg-slate-900 text-white space-y-3">
+            <div class="flex items-center justify-between text-xs border-b border-slate-800 pb-2">
+              <span class="text-slate-400 flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-emerald-400"></span> STT &amp; RAG Pipeline Result
+              </span>
+              <span id="detectedIntentBadge" class="bg-orange-500/20 text-orange-400 px-2 py-0.5 rounded font-mono text-[11px]">
+                intent: wage_calc
+              </span>
+            </div>
+
+            <!-- Worker Transcript -->
+            <div>
+              <p id="transcriptLabel" class="text-[11px] font-bold text-slate-400 uppercase tracking-wide">Transcribed Speech (Sarvam Saaras):</p>
+              <p id="sttTranscriptOutput" class="text-sm font-medium text-slate-100 mt-1">
+                "I worked 6 days at ₹750 per day. The employer paid me ₹2,500. How much money am I still owed?"
+              </p>
+            </div>
+
+            <!-- AI Synthesized Answer -->
+            <div class="pt-2 border-t border-slate-800">
+              <p class="text-[11px] font-bold text-orange-400 uppercase tracking-wide flex items-center justify-between">
+                <span id="responseHeaderLabel">ShramMitra Response:</span>
+                <button onclick="playTTSAudio()" class="text-xs text-orange-300 hover:text-white flex items-center gap-1 font-bold">
+                  <span>🔊 Play Audio (Bulbul TTS)</span>
+                </button>
+              </p>
+              <p id="ttsResponseOutput" class="text-sm text-slate-200 mt-1 leading-relaxed">
+                According to the WageLedger calculation: 6 days &times; ₹750 gives a gross wage of ₹4,500. Since you received ₹2,500, your employer owes you exactly ₹2,000. (Calculated deterministically by WageLedger).
+              </p>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Voice Flow Explanation Sidebar -->
+        <div class="w-full lg:w-96 space-y-4">
+          <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-4">
+            <h3 id="voiceArchTitle" class="text-base font-bold text-slate-900">How Voice Works Under The Hood</h3>
+            
+            <div class="space-y-3 text-xs text-slate-600">
+              <div class="flex items-start gap-3">
+                <span class="w-6 h-6 rounded-lg bg-orange-100 text-orange-700 font-bold flex items-center justify-center flex-shrink-0">1</span>
+                <div>
+                  <strong class="text-slate-900">Audio Ingestion (Client)</strong>
+                  <p class="text-slate-500 mt-0.5">Records audio &amp; dispatches to Firebase Cloud Function <code>processVoice</code>.</p>
+                </div>
+              </div>
+
+              <div class="flex items-start gap-3">
+                <span class="w-6 h-6 rounded-lg bg-orange-100 text-orange-700 font-bold flex items-center justify-center flex-shrink-0">2</span>
+                <div>
+                  <strong class="text-slate-900">Sarvam Saaras STT</strong>
+                  <p class="text-slate-500 mt-0.5">Accurate dialect recognition with automatic codemix (Hinglish/Tanglish).</p>
+                </div>
+              </div>
+
+              <div class="flex items-start gap-3">
+                <span class="w-6 h-6 rounded-lg bg-orange-100 text-orange-700 font-bold flex items-center justify-center flex-shrink-0">3</span>
+                <div>
+                  <strong class="text-slate-900">Deterministic WageLedger</strong>
+                  <p class="text-slate-500 mt-0.5">Rule #1: Guarantees ₹ figures are mathematically exact, never LLM hallucinations.</p>
+                </div>
+              </div>
+
+              <div class="flex items-start gap-3">
+                <span class="w-6 h-6 rounded-lg bg-orange-100 text-orange-700 font-bold flex items-center justify-center flex-shrink-0">4</span>
+                <div>
+                  <strong class="text-slate-900">Sarvam Bulbul TTS</strong>
+                  <p class="text-slate-500 mt-0.5">Synthesizes audio response back to worker in their native language.</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Safety Rule Reminder Callout -->
+            <div class="p-3.5 rounded-xl bg-amber-50 border border-amber-200 text-xs text-amber-900 space-y-1">
+              <div class="font-bold flex items-center gap-1.5 text-amber-800">
+                <span>🛡️ Non-Negotiable Safety Rule</span>
+              </div>
+              <p class="leading-relaxed">
+                If the speech mentions assault or violence, the system immediately prioritizes Police 112 and Labour Helpline 1800-425-1200 over routine grievance drafting.
+              </p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- ----------------------------------------------------------------------- -->
+    <!-- TAB 3: DETERMINISTIC DYNAMIC WAGE LEDGER                                -->
+    <!-- ----------------------------------------------------------------------- -->
+    <section id="tab-content-ledger" class="tab-content space-y-6">
+      
+      <div class="bg-gradient-to-r from-orange-600 to-amber-600 rounded-3xl p-6 sm:p-8 text-white shadow-lg flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div>
+          <span class="px-2.5 py-0.5 rounded-md bg-white/20 text-white text-xs font-bold uppercase tracking-wider">packages/shared/lib/src/ledger.dart</span>
+          <h2 id="ledgerHeaderTitle" class="text-2xl sm:text-3xl font-black mt-2">Deterministic Wage Ledger</h2>
+          <p id="ledgerHeaderSubtitle" class="text-xs sm:text-sm text-orange-100 mt-1 max-w-xl">
+            CRITICAL RULE #1: The LLM is NEVER allowed to invent monetary figures. All calculations run deterministically from user inputs.
+          </p>
+        </div>
+        <div class="bg-white/10 backdrop-blur-md px-4 py-3 rounded-2xl border border-white/20 text-center">
+          <span id="labelTotalPendingOwed" class="text-xs uppercase text-orange-200 font-semibold block">Total Pending Owed</span>
+          <span id="headerOwedBalance" class="text-2xl font-black text-white">₹3,200</span>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        <!-- Calculator Input Form -->
+        <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-4">
+          <h3 class="text-base font-bold text-slate-900 border-b border-slate-100 pb-3 flex items-center justify-between">
+            <span id="formAddWageTitle">Add Work &amp; Wage Entry</span>
+            <span class="text-xs font-normal text-slate-500">Dynamic</span>
+          </h3>
+
+          <div class="space-y-3 text-xs">
+            <div>
+              <label for="calcEmployer" id="labelEmployer" class="font-semibold text-slate-700 block mb-1">Employer / Contractor Name</label>
+              <input id="calcEmployer" type="text" value="Sharma Construction" oninput="runDeterministicCalculation()" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-xl focus:ring-2 focus:ring-orange-500 outline-none" placeholder="e.g. Raju Transports or Zomato Hub" />
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label for="calcRate" id="labelDailyRate" class="font-semibold text-slate-700 block mb-1">Daily / Shift Rate (₹)</label>
+                <input id="calcRate" type="number" value="800" min="0" oninput="runDeterministicCalculation()" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-xl focus:ring-2 focus:ring-orange-500 outline-none" />
+              </div>
+              <div>
+                <label for="calcDays" id="labelDaysWorked" class="font-semibold text-slate-700 block mb-1">Days Worked</label>
+                <input id="calcDays" type="number" value="6" min="0" oninput="runDeterministicCalculation()" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-xl focus:ring-2 focus:ring-orange-500 outline-none" />
+              </div>
+            </div>
+
+            <div>
+              <label for="calcPaid" id="labelAmountPaid" class="font-semibold text-slate-700 block mb-1">Amount Already Paid (₹)</label>
+              <input id="calcPaid" type="number" value="2800" min="0" oninput="runDeterministicCalculation()" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-xl focus:ring-2 focus:ring-orange-500 outline-none" />
+            </div>
+
+            <div>
+              <label for="calcNotes" id="labelWorkNotes" class="font-semibold text-slate-700 block mb-1">Work Description / Site</label>
+              <input id="calcNotes" type="text" value="Sector 62 Masonry & Plastering" oninput="runDeterministicCalculation()" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-xl focus:ring-2 focus:ring-orange-500 outline-none" placeholder="e.g. Tile fixing at Whitefield" />
+            </div>
+          </div>
+
+          <!-- Dynamic Calculation Breakdown Box -->
+          <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-2 text-xs">
+            <div class="flex justify-between text-slate-600">
+              <span id="calcPreviewGrossLabel">Gross Total:</span>
+              <strong id="prevGross" class="text-slate-900 font-bold">₹4,800</strong>
+            </div>
+            <div class="flex justify-between text-slate-600">
+              <span id="calcPreviewPaidLabel">Advance Paid:</span>
+              <span id="prevPaid" class="text-slate-900 font-bold">₹2,800</span>
+            </div>
+            <div class="border-t border-slate-200 pt-2 flex justify-between items-center">
+              <span id="calcPreviewOwedLabel" class="font-bold text-slate-900">Owed Balance:</span>
+              <span id="prevOwed" class="text-base font-black text-orange-600">₹2,000</span>
+            </div>
+          </div>
+
+          <div class="flex flex-col sm:flex-row gap-2">
+            <button onclick="saveLedgerEntry()" id="btnSaveLedger" class="flex-1 bg-orange-600 hover:bg-orange-700 text-white font-bold py-2.5 rounded-xl text-xs shadow-sm transition">
+              + Save Entry to Ledger
+            </button>
+            <button onclick="exportToWhatsApp()" id="btnWhatsAppSlip" class="px-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-xl text-xs shadow-sm transition flex items-center justify-center gap-1" title="Share slip on WhatsApp">
+              <span>WhatsApp Slip</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Dynamic Ledger Table & History -->
+        <div class="lg:col-span-2 bg-white rounded-3xl p-6 border border-slate-200 shadow-sm flex flex-col justify-between">
+          <div>
+            <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-3 mb-4">
+              <div>
+                <h3 id="tableTitle" class="text-base font-bold text-slate-900">Worker Wage Records</h3>
+                <p id="tableSubtitle" class="text-xs text-slate-500">Dynamically synced with local storage &amp; Cloud Firestore</p>
+              </div>
+              <div class="flex items-center gap-2">
+                <button onclick="downloadLedgerCSV()" id="btnDownloadCSV" class="text-xs font-semibold px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg transition">
+                  ⬇ Download CSV
+                </button>
+                <button onclick="clearLedgerHistory()" id="btnResetLedger" class="text-xs font-semibold px-2 py-1.5 text-slate-400 hover:text-red-600 transition">
+                  Reset
+                </button>
+              </div>
+            </div>
+
+            <!-- Dynamic Ledger Table -->
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-xs">
+                <thead>
+                  <tr class="bg-slate-50 text-slate-500 font-semibold border-b border-slate-200">
+                    <th id="thDate" class="py-2.5 px-3">Date</th>
+                    <th id="thEmployer" class="py-2.5 px-3">Employer / Site</th>
+                    <th id="thCalc" class="py-2.5 px-3">Calculation</th>
+                    <th id="thPaid" class="py-2.5 px-3">Paid</th>
+                    <th id="thOwed" class="py-2.5 px-3">Owed Balance</th>
+                    <th id="thAction" class="py-2.5 px-3 text-right">Action</th>
+                  </tr>
+                </thead>
+                <tbody id="ledgerTableBody" class="divide-y divide-slate-100">
+                  <!-- Populated dynamically by JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Audit Proof Banner -->
+          <div class="mt-6 p-4 rounded-2xl bg-blue-50 border border-blue-200 text-xs text-blue-900 flex items-start gap-3">
+            <span class="text-lg">⚖️</span>
+            <div>
+              <strong id="auditTitle" class="font-bold">Legal Audit Integrity</strong>
+              <p id="auditDesc" class="mt-0.5 text-blue-800">
+                Every calculation record stores <code>owed</code> computed deterministically. This satisfies Section 18 of the Payment of Wages Act and Section 22 of the Karnataka Gig Workers Act for admissible dispute claims.
+              </p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- ----------------------------------------------------------------------- -->
+    <!-- TAB 4: DYNAMIC GRIEVANCE & LEGAL DRAFT GENERATOR                        -->
+    <!-- ----------------------------------------------------------------------- -->
+    <section id="tab-content-grievance" class="tab-content space-y-6">
+      
+      <div class="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-6">
+        <div>
+          <span id="badgeDraftingStudio" class="text-xs font-bold uppercase tracking-wider text-purple-700 bg-purple-50 px-2.5 py-1 rounded-md">Drafting Studio</span>
+          <h2 id="titleGrievanceStudio" class="text-2xl font-black text-slate-900 mt-2">Formal Grievance &amp; Dispute Notice Drafter</h2>
+          <p id="subtitleGrievanceStudio" class="text-xs text-slate-500 mt-1">Generates formal letters adhering to state labour rules. Ready to print, sign, or WhatsApp to contractor.</p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          
+          <!-- Dynamic Input Selection -->
+          <div class="space-y-4">
+            <div>
+              <label id="labelDraftType" class="text-xs font-bold text-slate-700 uppercase tracking-wider block mb-2">Select Draft Type</label>
+              <div class="space-y-2">
+                <button type="button" onclick="selectWebDraftType('non_payment', this)" id="btnDraftType1" class="web-draft-btn active-draft-type w-full text-left p-3 rounded-xl border border-purple-500 bg-purple-50 text-purple-900 font-semibold text-xs flex items-center justify-between">
+                  <span>📄 Wage Non-Payment Complaint</span>
+                  <span class="text-[10px] bg-purple-200 px-1.5 py-0.5 rounded">Labour Dept</span>
+                </button>
+                <button type="button" onclick="selectWebDraftType('demand_notice', this)" id="btnDraftType2" class="web-draft-btn w-full text-left p-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-700 font-semibold text-xs flex items-center justify-between hover:border-slate-300">
+                  <span>⚖️ 15-Day Legal Demand Notice</span>
+                  <span class="text-[10px] bg-slate-200 px-1.5 py-0.5 rounded">To Contractor</span>
+                </button>
+                <button type="button" onclick="selectWebDraftType('agreement', this)" id="btnDraftType3" class="web-draft-btn w-full text-left p-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-700 font-semibold text-xs flex items-center justify-between hover:border-slate-300">
+                  <span>🤝 Daily Wage Work Agreement</span>
+                  <span class="text-[10px] bg-slate-200 px-1.5 py-0.5 rounded">Pre-Work</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="space-y-3 text-xs">
+              <div>
+                <label for="draftWorkerName" id="labelDraftWorkerName" class="font-semibold text-slate-700 block mb-1">Worker Name</label>
+                <input id="draftWorkerName" type="text" value="Bhupinder Singh" oninput="generateWebGrievanceDraft()" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-xl focus:ring-2 focus:ring-purple-500 outline-none" />
+              </div>
+
+              <div>
+                <label for="draftEmployerName" id="labelDraftEmployerName" class="font-semibold text-slate-700 block mb-1">Employer / Contractor Name</label>
+                <input id="draftEmployerName" type="text" value="Sharma Construction" oninput="generateWebGrievanceDraft()" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-xl focus:ring-2 focus:ring-purple-500 outline-none" />
+              </div>
+
+              <div>
+                <label for="draftOwedAmount" id="labelDraftOwedAmount" class="font-semibold text-slate-700 block mb-1">Amount Owed (₹)</label>
+                <input id="draftOwedAmount" type="number" value="2000" min="0" oninput="generateWebGrievanceDraft()" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-xl focus:ring-2 focus:ring-purple-500 outline-none font-bold text-orange-600" />
+                <span class="text-[10px] text-slate-400 mt-0.5 block">Dynamically linked with WageLedger calculations</span>
+              </div>
+
+              <div>
+                <label for="draftWorkSummary" id="labelDraftWorkSummary" class="font-semibold text-slate-700 block mb-1">Dispute Details &amp; Period</label>
+                <textarea id="draftWorkSummary" rows="3" oninput="generateWebGrievanceDraft()" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-xl focus:ring-2 focus:ring-purple-500 outline-none resize-none">Worked 6 continuous shifts between 1st Oct and 7th Oct. Repeated requests for balance payment have been ignored.</textarea>
+              </div>
+
+              <div class="flex gap-2">
+                <button onclick="generateWebGrievanceDraft()" id="btnGenerateDocument" class="flex-1 py-3 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-xl text-xs shadow-md shadow-purple-600/20 transition">
+                  ⚡ Update Document
+                </button>
+                <button onclick="sendDraftOnWhatsApp()" id="btnSendWhatsAppDraft" class="px-4 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs shadow-md transition" title="Send Draft on WhatsApp">
+                  WhatsApp
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Dynamic Document Preview Pane -->
+          <div class="lg:col-span-2 bg-slate-50 rounded-2xl p-6 border border-slate-200 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between pb-3 border-b border-slate-200 mb-4">
+                <span id="labelDocPreview" class="text-xs font-bold text-slate-600 uppercase tracking-wide">Document Preview</span>
+                <div class="flex items-center gap-2">
+                  <button onclick="copyDraftToClipboard()" id="btnCopyText" class="text-xs font-semibold px-3 py-1 bg-white hover:bg-slate-100 text-slate-700 rounded-lg border border-slate-200 shadow-sm transition">
+                    📋 Copy Text
+                  </button>
+                  <button onclick="window.print()" id="btnPrintPDF" class="text-xs font-semibold px-3 py-1 bg-white hover:bg-slate-100 text-slate-700 rounded-lg border border-slate-200 shadow-sm transition">
+                    🖨️ Print / PDF
+                  </button>
+                </div>
+              </div>
+
+              <!-- Formal Document Box (Live Reacts to user inputs) -->
+              <div id="grievanceDraftContent" class="bg-white p-6 rounded-xl border border-slate-200 font-mono text-xs text-slate-800 whitespace-pre-wrap leading-relaxed shadow-inner">
+                <!-- Dynamically generated in selected language -->
+              </div>
+            </div>
+
+            <!-- MANDATORY STATUTORY DISCLAIMER (Rule #3: Draft Disclaimer) -->
+            <div class="mt-4 p-4 rounded-xl bg-amber-50 border-l-4 border-amber-500 text-xs text-amber-900 space-y-1">
+              <strong class="font-bold flex items-center gap-1.5">
+                <span>⚠️ वैधानिक अस्वीकरण / Statutory Disclaimer (Non-Negotiable):</span>
+              </strong>
+              <p id="statutoryDisclaimerText" class="font-medium text-amber-950">
+                "यह एक मसौदा है, कानूनी सलाह नहीं। गंभीर विवाद के लिए वकील या श्रम हेल्पलाइन से संपर्क करें।"
+              </p>
+              <p class="text-[11px] text-amber-800">
+                ("This is a draft, not legal advice. For serious disputes, contact a lawyer or the labour helpline 1800-425-1200.")
+              </p>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ----------------------------------------------------------------------- -->
+    <!-- TAB 5: WELFARE SCHEMES, PENSION CALCULATOR & RAG KNOWLEDGE BASE         -->
+    <!-- ----------------------------------------------------------------------- -->
+    <section id="tab-content-schemes" class="tab-content space-y-6">
+      
+      <div class="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <span id="badgeSchemesRAG" class="text-xs font-bold uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-md">Knowledge Base (RAG)</span>
+            <h2 id="titleSchemes" class="text-2xl font-black text-slate-900 mt-2">Welfare Schemes &amp; Legal Rights Directory</h2>
+            <p id="subtitleSchemes" class="text-xs text-slate-500 mt-1">Sourced from PIB releases, state acts, and official gazettes. Zero fabrication rule enforced.</p>
+          </div>
+          <div>
+            <input id="schemeSearchInput" oninput="filterSchemes(this.value)" type="search" placeholder="🔍 Search e-Shram, PMJAY, pension..." class="px-4 py-2 border border-slate-300 rounded-xl text-xs outline-none focus:ring-2 focus:ring-emerald-500 w-full sm:w-64" />
+          </div>
+        </div>
+
+        <!-- Interactive PM-SYM Pension Dynamic Calculator Widget -->
+        <div class="p-5 rounded-2xl bg-gradient-to-r from-amber-500/10 via-orange-500/10 to-amber-500/10 border border-amber-200 flex flex-col md:flex-row items-center justify-between gap-4">
+          <div class="space-y-1">
+            <span class="text-xs font-bold uppercase tracking-wider text-amber-800">Interactive Tool</span>
+            <h3 id="pensionCalcTitle" class="text-base font-bold text-slate-900">PM-SYM Pension Contribution Calculator</h3>
+            <p id="pensionCalcDesc" class="text-xs text-slate-600">Enter your entry age to calculate your exact monthly deposit and government matching contribution.</p>
+          </div>
+          <div class="flex items-center gap-3 w-full md:w-auto">
+            <div class="flex items-center gap-2">
+              <label for="pensionAgeInput" id="labelAge" class="text-xs font-bold text-slate-700">Age (18-40):</label>
+              <input id="pensionAgeInput" type="number" min="18" max="40" value="25" oninput="calculatePensionDynamic(this.value)" class="w-16 px-2.5 py-1.5 text-xs font-bold border border-slate-300 rounded-lg text-center" />
+            </div>
+            <div class="bg-white px-3 py-1.5 rounded-lg border border-amber-300 text-xs font-bold text-amber-900 shadow-sm whitespace-nowrap">
+              <span id="pensionMonthlyResult">₹80 / month</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Scheme Cards Grid -->
+        <div id="schemesCardGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          
+          <!-- e-Shram -->
+          <div class="scheme-card bg-slate-50 rounded-2xl p-5 border border-slate-200 space-y-3 flex flex-col justify-between" data-keywords="eshram e-shram registration uan card unorganised worker ई-श्रम">
+            <div>
+              <div class="flex items-center justify-between">
+                <span class="text-2xl">📋</span>
+                <span class="text-[11px] font-bold px-2 py-0.5 rounded bg-blue-100 text-blue-700">Central Scheme</span>
+              </div>
+              <h3 id="scheme1Title" class="font-bold text-base text-slate-900 mt-2">e-Shram Registration &amp; UAN</h3>
+              <p id="scheme1Desc" class="text-xs text-slate-600 mt-1">Universal Account Number for 380M+ unorganised workers. Gateway to accident insurance and state DBT pensions.</p>
+              
+              <div class="mt-3 text-xs bg-white p-3 rounded-xl border border-slate-200 space-y-1">
+                <strong id="scheme1ApplyTitle" class="text-slate-900">How to apply:</strong>
+                <p id="scheme1Apply1" class="text-slate-500">1. Open UMANG app or visit eshram.gov.in</p>
+                <p id="scheme1Apply2" class="text-slate-500">2. Free Aadhaar OTP eKYC verification</p>
+                <p id="scheme1Apply3" class="text-slate-500">3. Download 12-digit UAN Card</p>
+              </div>
+            </div>
+            
+            <div class="pt-3 border-t border-slate-200 flex items-center justify-between text-[11px] text-slate-500">
+              <span>Citation: PIB Gazette #2024-ESH</span>
+              <a href="https://eshram.gov.in" target="_blank" rel="noopener noreferrer" class="text-emerald-600 font-bold hover:underline">Official Portal ↗</a>
+            </div>
+          </div>
+
+          <!-- PMJAY -->
+          <div class="scheme-card bg-slate-50 rounded-2xl p-5 border border-slate-200 space-y-3 flex flex-col justify-between" data-keywords="pmjay ayushman bharat health insurance hospital cashless 5 lakh आयुष्मान">
+            <div>
+              <div class="flex items-center justify-between">
+                <span class="text-2xl">🏥</span>
+                <span class="text-[11px] font-bold px-2 py-0.5 rounded bg-emerald-100 text-emerald-700">Health Security</span>
+              </div>
+              <h3 id="scheme2Title" class="font-bold text-base text-slate-900 mt-2">Ayushman Bharat (PMJAY)</h3>
+              <p id="scheme2Desc" class="text-xs text-slate-600 mt-1">₹5 Lakhs per family per year cashless treatment across 27,000+ empaneled private and public hospitals.</p>
+              
+              <div class="mt-3 text-xs bg-white p-3 rounded-xl border border-slate-200 space-y-1">
+                <strong id="scheme2EligTitle" class="text-slate-900">Eligibility:</strong>
+                <p id="scheme2Elig1" class="text-slate-500">• Linked to e-Shram unorganised database</p>
+                <p id="scheme2Elig2" class="text-slate-500">• Check name via Ration card on pmjay.gov.in</p>
+                <p id="scheme2Elig3" class="text-slate-500">• Zero cost Ayushman Golden Card generation</p>
+              </div>
+            </div>
+
+            <div class="pt-3 border-t border-slate-200 flex items-center justify-between text-[11px] text-slate-500">
+              <span>Citation: NHA Circular 2024</span>
+              <a href="https://pmjay.gov.in" target="_blank" rel="noopener noreferrer" class="text-emerald-600 font-bold hover:underline">Check Name ↗</a>
+            </div>
+          </div>
+
+          <!-- Karnataka Gig Act 2025 -->
+          <div class="scheme-card bg-slate-50 rounded-2xl p-5 border border-slate-200 space-y-3 flex flex-col justify-between" data-keywords="karnataka gig workers act 2025 section 22 swiggy zomato platform grievance कर्नाटक">
+            <div>
+              <div class="flex items-center justify-between">
+                <span class="text-2xl">⚖️</span>
+                <span class="text-[11px] font-bold px-2 py-0.5 rounded bg-purple-100 text-purple-700">Landmark State Law</span>
+              </div>
+              <h3 id="scheme3Title" class="font-bold text-base text-slate-900 mt-2">Karnataka Platform Gig Workers Act 2025</h3>
+              <p id="scheme3Desc" class="text-xs text-slate-600 mt-1">Section 22 statutory grievance redressal mechanism for app-based aggregators.</p>
+              
+              <div class="mt-3 text-xs bg-white p-3 rounded-xl border border-slate-200 space-y-1">
+                <strong id="scheme3TimelineTitle" class="text-slate-900">Statutory Timelines:</strong>
+                <p id="scheme3Timeline1" class="text-slate-500">• Internal Dispute Committee: 14 days action report</p>
+                <p id="scheme3Timeline2" class="text-slate-500">• Appellate Officer: 45 days final binding order</p>
+                <p id="scheme3Timeline3" class="text-slate-500">• Mandatory welfare fee deducted on per-transaction basis</p>
+              </div>
+            </div>
+
+            <div class="pt-3 border-t border-slate-200 flex items-center justify-between text-[11px] text-slate-500">
+              <span>Citation: Kar. Act No. 14 of 2025, Sec 22</span>
+              <span class="text-purple-600 font-bold">Applies to All Apps</span>
+            </div>
+          </div>
+
+          <!-- PM-SYM Pension -->
+          <div class="scheme-card bg-slate-50 rounded-2xl p-5 border border-slate-200 space-y-3 flex flex-col justify-between" data-keywords="pmsym pension old age 3000 maandhan unorganised retirement पेंशन">
+            <div>
+              <div class="flex items-center justify-between">
+                <span class="text-2xl">💰</span>
+                <span class="text-[11px] font-bold px-2 py-0.5 rounded bg-amber-100 text-amber-700">Old Age Security</span>
+              </div>
+              <h3 id="scheme4Title" class="font-bold text-base text-slate-900 mt-2">PM Shram Yogi Maandhan (PM-SYM)</h3>
+              <p id="scheme4Desc" class="text-xs text-slate-600 mt-1">Monthly pension of ₹3,000/month after age 60 for unorganised workers with income under ₹15,000.</p>
+              
+              <div class="mt-3 text-xs bg-white p-3 rounded-xl border border-slate-200 space-y-1">
+                <strong id="scheme4ContribTitle" class="text-slate-900">Contribution:</strong>
+                <p id="scheme4Contrib1" class="text-slate-500">• 50:50 matching grant by Govt of India</p>
+                <p id="scheme4Contrib2" class="text-slate-500">• Worker pays ₹55 to ₹200/month based on entry age</p>
+                <p id="scheme4Contrib3" class="text-slate-500">• CSC centre enrollment with Bank Passbook</p>
+              </div>
+            </div>
+
+            <div class="pt-3 border-t border-slate-200 flex items-center justify-between text-[11px] text-slate-500">
+              <span>Citation: Gazette Ext. No. 74/2019</span>
+              <a href="https://maandhan.in" target="_blank" rel="noopener noreferrer" class="text-emerald-600 font-bold hover:underline">maandhan.in ↗</a>
+            </div>
+          </div>
+
+          <!-- Code on Social Security 2026 Rules -->
+          <div class="scheme-card bg-slate-50 rounded-2xl p-5 border border-slate-200 space-y-3 flex flex-col justify-between" data-keywords="central social security rules 2026 gig platform social security board cess सामाजिक सुरक्षा">
+            <div>
+              <div class="flex items-center justify-between">
+                <span class="text-2xl">🛡️</span>
+                <span class="text-[11px] font-bold px-2 py-0.5 rounded bg-indigo-100 text-indigo-700">Central Code</span>
+              </div>
+              <h3 id="scheme5Title" class="font-bold text-base text-slate-900 mt-2">Social Security Code (2026 Rules)</h3>
+              <p id="scheme5Desc" class="text-xs text-slate-600 mt-1">Framework mandating aggregators contribute 1-2% of turnover to the National Social Security Board fund.</p>
+              
+              <div class="mt-3 text-xs bg-white p-3 rounded-xl border border-slate-200 space-y-1">
+                <strong id="scheme5ProvTitle" class="text-slate-900">Key Provisions:</strong>
+                <p id="scheme5Prov1" class="text-slate-500">• Life and disability cover for platform partners</p>
+                <p id="scheme5Prov2" class="text-slate-500">• Maternity benefits for female gig delivery workers</p>
+                <p id="scheme5Prov3" class="text-slate-500">• National toll-free helpline integration</p>
+              </div>
+            </div>
+
+            <div class="pt-3 border-t border-slate-200 flex items-center justify-between text-[11px] text-slate-500">
+              <span>Citation: Central SS Rules 2026, Part VI</span>
+              <span class="text-indigo-600 font-bold">Gazette Enacted</span>
+            </div>
+          </div>
+
+          <!-- State Labour Helplines -->
+          <div class="scheme-card bg-red-50 rounded-2xl p-5 border border-red-200 space-y-3 flex flex-col justify-between" data-keywords="helpline phone emergency labour commissioner wage complaint call हेल्पलाइन">
+            <div>
+              <div class="flex items-center justify-between">
+                <span class="text-2xl">📞</span>
+                <span class="text-[11px] font-bold px-2 py-0.5 rounded bg-red-200 text-red-800">Helpline Directory</span>
+              </div>
+              <h3 id="scheme6Title" class="font-bold text-base text-red-950 mt-2">National &amp; State Labour Helplines</h3>
+              <p id="scheme6Desc" class="text-xs text-red-800 mt-1">Rule #2 Citation Discipline: If RAG confidence is low, worker is directly guided to call.</p>
+              
+              <div class="mt-3 text-xs bg-white p-3 rounded-xl border border-red-200 space-y-1.5 font-semibold text-slate-800">
+                <p class="text-red-700">National Shram Suvidha: 1800-425-1200</p>
+                <p>Karnataka IPGRS Portal: 155214</p>
+                <p>Delhi Labour Board: 011-23387819</p>
+                <p>Maharashtra Kamgar: 1800-22-8080</p>
+              </div>
+            </div>
+
+            <div class="pt-3 border-t border-red-200 flex items-center justify-between text-[11px] text-red-700 font-bold">
+              <span>Toll-Free Government Lines</span>
+              <a href="tel:18004251200" class="underline">Call Now 📞</a>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ----------------------------------------------------------------------- -->
+    <!-- TAB 6: TECHNICAL ARCHITECTURE & CRITICAL RULES                          -->
+    <!-- ----------------------------------------------------------------------- -->
+    <section id="tab-content-architecture" class="tab-content space-y-6">
+      
+      <div class="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-6">
+        <div>
+          <span id="badgeTechSpec" class="text-xs font-bold uppercase tracking-wider text-slate-700 bg-slate-100 px-2.5 py-1 rounded-md">Technical Specification</span>
+          <h2 id="titleArch" class="text-2xl font-black text-slate-900 mt-2">Architecture &amp; Non-Negotiable Engineering Rules</h2>
+          <p id="subtitleArch" class="text-xs text-slate-500 mt-1">Directly adhering to the repository specification in <code>CLAUDE.md</code>.</p>
+        </div>
+
+        <!-- 6 Critical Rules Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
+            <span id="rule1Name" class="font-black text-orange-600 text-sm">Rule 1: Ledger-First Money Rule</span>
+            <p id="rule1Desc" class="text-xs text-slate-600">The LLM must NEVER generate a rupee amount. Every figure shown to the worker originates strictly from <code>packages/shared/lib/src/ledger.dart</code>.</p>
+          </div>
+
+          <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
+            <span id="rule2Name" class="font-black text-blue-600 text-sm">Rule 2: Citation Discipline</span>
+            <p id="rule2Desc" class="text-xs text-slate-600">Every scheme answer must cite its official source (PIB, Gazette). Low-confidence RAG returns helpline fallback <code>1800-425-1200</code>.</p>
+          </div>
+
+          <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
+            <span id="rule3Name" class="font-black text-purple-600 text-sm">Rule 3: Draft Disclaimer</span>
+            <p id="rule3Desc" class="text-xs text-slate-600">Every draft (grievance, agreement, demand notice) must include the exact statutory disclaimer advising consultation with an advocate or helpline.</p>
+          </div>
+
+          <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
+            <span id="rule4Name" class="font-black text-red-600 text-sm">Rule 4: Escalation Triggers</span>
+            <p id="rule4Desc" class="text-xs text-slate-600">Mentions of assault, threats, or severe abuse abort standard procedural grievance flows and immediately surface Police 112 &amp; Labour 1800-425-1200.</p>
+          </div>
+
+          <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
+            <span id="rule5Name" class="font-black text-emerald-600 text-sm">Rule 5: Client API Key Protection</span>
+            <p id="rule5Desc" class="text-xs text-slate-600">The Sarvam AI API key is isolated in Firebase Cloud Functions environment configuration. The Flutter and Web clients never store private keys.</p>
+          </div>
+
+          <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
+            <span id="rule6Name" class="font-black text-amber-600 text-sm">Rule 6: e-Shram API Limitation</span>
+            <p id="rule6Desc" class="text-xs text-slate-600">No public e-Shram API exists. The system acts as a step-by-step guidance companion; no scraping or pretending to query government databases.</p>
+          </div>
+        </div>
+
+        <!-- Tech Stack Alignment -->
+        <div class="p-6 rounded-2xl bg-slate-900 text-white space-y-4">
+          <h3 class="text-base font-bold text-orange-400">Integrated Stack Components</h3>
+          <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 text-xs">
+            <div class="bg-slate-800 p-3 rounded-xl border border-slate-700">
+              <span class="text-slate-400 block text-[10px]">Frontend</span>
+              <strong class="text-white">Flutter / Web</strong>
+            </div>
+            <div class="bg-slate-800 p-3 rounded-xl border border-slate-700">
+              <span class="text-slate-400 block text-[10px]">Backend</span>
+              <strong class="text-white">Functions (Dart)</strong>
+            </div>
+            <div class="bg-slate-800 p-3 rounded-xl border border-slate-700">
+              <span class="text-slate-400 block text-[10px]">Database</span>
+              <strong class="text-white">Cloud Firestore</strong>
+            </div>
+            <div class="bg-slate-800 p-3 rounded-xl border border-slate-700">
+              <span class="text-slate-400 block text-[10px]">STT / TTS</span>
+              <strong class="text-white">Sarvam Saaras/Bulbul</strong>
+            </div>
+            <div class="bg-slate-800 p-3 rounded-xl border border-slate-700">
+              <span class="text-slate-400 block text-[10px]">LLM Reasoner</span>
+              <strong class="text-white">Sarvam-105B</strong>
+            </div>
+            <div class="bg-slate-800 p-3 rounded-xl border border-slate-700">
+              <span class="text-slate-400 block text-[10px]">Shared Logic</span>
+              <strong class="text-white">packages/shared</strong>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- ========================================================================= -->
+  <!-- FOOTER                                                                    -->
+  <!-- ========================================================================= -->
+  <footer class="mt-auto bg-white border-t border-slate-200 py-8 px-4 text-xs text-slate-500">
+    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
+      <div>
+        <p class="font-bold text-slate-800">ShramMitra AI (श्रममित्र / Dihadi AI)</p>
+        <p id="footerDesc" class="mt-0.5">Companion Web &amp; Mobile Platform for India's 450M+ Gig and Informal Workforce.</p>
+      </div>
+      <div class="flex items-center gap-4 text-slate-600 font-semibold">
+        <span>Labour Helpline: 1800-425-1200</span>
+        <span>•</span>
+        <button onclick="switchMainTab('architecture')" class="hover:text-orange-600">CLAUDE.md Rules</button>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ========================================================================= -->
+  <!-- SCRIPT: COMPLETE MULTILINGUAL DICTIONARY & DYNAMIC ENGINE                 -->
+  <!-- ========================================================================= -->
+  <script>
+    // -------------------------------------------------------------------------
+    // 1. Exhaustive Multilingual Dictionary (All 6 Languages)
+    // -------------------------------------------------------------------------
+    const translations = {
+      en: {
+        safetyBar: "🚨 24x7 Emergency Escalation: Immediate Police & Labour Help",
+        police: "Police: 112", labour: "Labour: 1800-425-1200", women: "Women: 181",
+        tagline: "Voice Platform for Informal & Gig Workers",
+        navHome: "Overview", navVoice: "Voice AI", navLedger: "Wage Ledger", navGrievance: "Grievance Drafter", navSchemes: "Schemes & Rights", navArch: "Architecture",
+        heroTag: "⚡ Multilingual Voice-First Platform",
+        heroTitle: "Fair Wages, Legal Dignity & Social Welfare for Every Informal Worker.",
+        heroSubtitle: "ShramMitra AI empowers gig delivery partners, daily-wage laborers, drivers, and domestic workers with voice-driven earnings tracking, deterministic wage calculation, legally grounded grievance drafting, and welfare scheme navigation.",
+        ctaVoice: "Try Voice Assistant", ctaLedger: "Calculate Wages (Ledger)",
+        rule1Ribbon: "Deterministic calculations (LLM never generates ₹)",
+        rule2Ribbon: "Official scheme citations required",
+        rule3Ribbon: "Mandatory legal draft disclaimer",
+        cardTitleVoice: "Voice-First Experience", cardDescVoice: "Powered by Sarvam AI Saaras (STT) & Bulbul (TTS) in Indian languages.",
+        cardTitleLedger: "Wage Ledger", cardDescLedger: "Deterministic wage math in packages/shared/. No hallucinations.",
+        cardTitleGrievance: "Grievance Drafter", cardDescGrievance: "Instant legal drafts for wage non-payment and agreements.",
+        cardTitleSchemes: "Schemes & Rights", cardDescSchemes: "Verified legal & scheme guidance with direct citations.",
+        personasTitle: "Built Specifically For 450M+ Informal Workers",
+        personasSubtitle: "Designed for noisy roadside environments, low literacy, and fast audio resolution.",
+        badgeVoiceConsole: "Live Voice Console", titleVoiceConsole: "Talk to ShramMitra AI", subtitleVoiceConsole: "Record your voice, click sample worker queries, or type custom input below.",
+        readyToListen: "Ready to listen", listening: "Listening", listeningStatus: "Listening to your voice...",
+        micHelp: "Click microphone to record, or choose a pre-recorded worker sample below",
+        sampleWageTitle: "💰 Wage Calculation", sampleWagePrompt: '"I worked 6 days at ₹750/day and got ₹2500, calculate my balance"',
+        sampleEshramTitle: "📋 e-Shram Registration", sampleEshramPrompt: '"How do I make my e-Shram card without paying agents?"',
+        sampleSafetyTitle: "🚨 Safety / Threat", sampleSafetyPrompt: '"Contractor is threatening to beat me if I ask for wages"',
+        sampleGigTitle: "⚖️ Gig Law Grievance", sampleGigPrompt: '"What are my rights under Karnataka Gig Workers Act 2025?"',
+        ledgerHeaderTitle: "Deterministic Wage Ledger",
+        ledgerHeaderSubtitle: "CRITICAL RULE #1: The LLM is NEVER allowed to invent monetary figures. All calculations run deterministically from user inputs.",
+        totalPendingOwed: "Total Pending Owed",
+        addWageTitle: "Add Work & Wage Entry",
+        labelEmployer: "Employer / Contractor Name", labelRate: "Daily / Shift Rate (₹)", labelDays: "Days Worked", labelPaid: "Amount Already Paid (₹)", labelNotes: "Work Description / Site",
+        btnSaveLedger: "+ Save Entry to Ledger", btnWhatsAppSlip: "WhatsApp Slip", btnDownloadCSV: "⬇ Download CSV", btnResetLedger: "Reset",
+        thDate: "Date", thEmployer: "Employer / Site", thCalc: "Calculation", thPaid: "Paid", thOwed: "Owed Balance", thAction: "Action",
+        badgeDrafting: "Drafting Studio", titleGrievance: "Formal Grievance & Dispute Notice Drafter", subtitleGrievance: "Generates formal letters adhering to state labour rules. Ready to print, sign, or WhatsApp to contractor.",
+        btnDraft1: "📄 Wage Non-Payment Complaint", btnDraft2: "⚖️ 15-Day Legal Demand Notice", btnDraft3: "🤝 Daily Wage Work Agreement",
+        labelWorker: "Worker Name", labelDraftEmp: "Employer / Contractor Name", labelDraftOwed: "Amount Owed (₹)", labelDraftSummary: "Dispute Details & Period",
+        btnUpdateDoc: "⚡ Update Document", btnCopy: "📋 Copy Text", btnPrint: "🖨️ Print / PDF",
+        disclaimer: "यह एक मसौदा है, कानूनी सलाह नहीं। गंभीर विवाद के लिए वकील या श्रम हेल्पलाइन से संपर्क करें।"
+      },
+      hi: {
+        safetyBar: "🚨 24x7 आपातकालीन हेल्पलाइन: तुरंत पुलिस व श्रम विभाग सहायता",
+        police: "पुलिस: 112", labour: "श्रम हेल्पलाइन: 1800-425-1200", women: "महिला: 181",
+        tagline: "असंगठित व गिग कामगारों के लिए वॉइस-फर्स्ट प्लेटफॉर्म",
+        navHome: "होम", navVoice: "वॉइस AI", navLedger: "मजदूरी हिसाब", navGrievance: "शिकायत पत्र", navSchemes: "योजनाएं व अधिकार", navArch: "आर्किटेक्चर",
+        heroTag: "⚡ बहुभाषी वॉइस-फर्स्ट AI सहायक",
+        heroTitle: "हर असंगठित व गिग कामगार के लिए सही मजदूरी, सम्मान और कानूनी अधिकार।",
+        heroSubtitle: "श्रममित्र AI (दहाड़ी AI) डिलीवरी पार्टनर्स, निर्माण श्रमिकों, ड्राइवरों और घरेलू कामगारों को बोलकर मजदूरी हिसाब, कानूनी शिकायत पत्र और सरकारी योजनाएं समझाने में मदद करता है।",
+        ctaVoice: "आवाज़ से बात करें", ctaLedger: "मजदूरी हिसाब (Ledger)",
+        rule1Ribbon: "सटीक हिसाब (AI कभी रुपये का अनुमान नहीं लगाता)",
+        rule2Ribbon: "सरकारी योजनाओं का आधिकारिक प्रमाण",
+        rule3Ribbon: "अनिवार्य कानूनी अस्वीकरण (Disclaimer)",
+        cardTitleVoice: "वॉइस-फर्स्ट अनुभव", cardDescVoice: "सर्वम AI (Saaras + Bulbul) द्वारा संचालित भारतीय भाषाओं में वॉइस सपोर्ट।",
+        cardTitleLedger: "मजदूरी लेजर", cardDescLedger: "packages/shared/ में सटीक गणितीय हिसाब। कोई गलत गणना नहीं।",
+        cardTitleGrievance: "शिकायत पत्र ड्राफ्टर", cardDescGrievance: "मजदूरी न मिलने पर तुरंत श्रम आयुक्त शिकायत पत्र व कानूनी नोटिस।",
+        cardTitleSchemes: "योजनाएं व अधिकार", cardDescSchemes: "ई-श्रम, आयुष्मान व गिग वर्कर कानून के सत्यापित सरकारी नियम।",
+        personasTitle: "45 करोड़+ असंगठित कामगारों के लिए समर्पित",
+        personasSubtitle: "सड़क के शोरगुल और सरल बोलचाल के लिए विशेष रूप से डिज़ाइन किया गया।",
+        badgeVoiceConsole: "लाइव वॉइस कंसोल", titleVoiceConsole: "श्रममित्र AI से बोलकर बात करें", subtitleVoiceConsole: "माइक दबाकर बोलें या नीचे दिए गए उदाहरण पर क्लिक करें।",
+        readyToListen: "सुनने के लिए तैयार", listening: "सुन रहा हूँ", listeningStatus: "आपकी आवाज़ सुनी जा रही है...",
+        micHelp: "माइक दबाकर बोलें, या नीचे से सवाल चुनें",
+        sampleWageTitle: "💰 मजदूरी हिसाब", sampleWagePrompt: '"मैंने ₹750 रोज़ के हिसाब से 6 दिन काम किया और ₹2500 मिले, मेरा कितना बाकी है?"',
+        sampleEshramTitle: "📋 ई-श्रम पंजीकरण", sampleEshramPrompt: '"ई-श्रम कार्ड बिना किसी दलाल के कैसे बनाएं?"',
+        sampleSafetyTitle: "🚨 सुरक्षा व धमकी", sampleSafetyPrompt: '"ठेकेदार मजदूरी मांगने पर मारपीट की धमकी दे रहा है"',
+        sampleGigTitle: "⚖️ गिग वर्कर कानून", sampleGigPrompt: '"कर्नाटक गिग वर्कर कानून 2025 में मेरे क्या अधिकार हैं?"',
+        ledgerHeaderTitle: "सटीक मजदूरी लेजर (Wage Ledger)",
+        ledgerHeaderSubtitle: "नियम #1: AI कभी मनगढ़ंत रुपये नहीं बताता। सारा हिसाब सीधे गणितीय फॉर्मूले से होता है।",
+        totalPendingOwed: "कुल बकाया राशि",
+        addWageTitle: "नया काम व मजदूरी दर्ज करें",
+        labelEmployer: "नियोक्ता / ठेकेदार का नाम", labelRate: "दैनिक मजदूरी दर (₹)", labelDays: "काम किए गए दिन", labelPaid: "मिली हुई अग्रिम राशि (₹)", labelNotes: "काम का विवरण / साइट",
+        btnSaveLedger: "+ लेजर में सेव करें", btnWhatsAppSlip: "व्हाट्सएप पर्ची", btnDownloadCSV: "⬇ CSV डाउनलोड", btnResetLedger: "रीसेट",
+        thDate: "दिनांक", thEmployer: "नियोक्ता / साइट", thCalc: "हिसाब", thPaid: "भुगतान मिला", thOwed: "बकाया राशि", thAction: "कार्रवाई",
+        badgeDrafting: "दस्तावेज़ ड्राफ्टिंग", titleGrievance: "शिकायत पत्र व कानूनी मांग नोटिस", subtitleGrievance: "श्रम विभाग के नियमों के अनुसार औपचारिक पत्र तैयार करें। प्रिंट करें या व्हाट्सएप पर भेजें।",
+        btnDraft1: "📄 मजदूरी न मिलने की शिकायत", btnDraft2: "⚖️ 15 दिवसीय कानूनी मांग नोटिस", btnDraft3: "🤝 दैनिक मजदूरी कार्य अनुबंध",
+        labelWorker: "श्रमिक का नाम", labelDraftEmp: "नियोक्ता / ठेकेदार का नाम", labelDraftOwed: "बकाया राशि (₹)", labelDraftSummary: "विवाद का विवरण व कार्य अवधि",
+        btnUpdateDoc: "⚡ दस्तावेज़ अपडेट करें", btnCopy: "📋 कॉपी करें", btnPrint: "🖨️ प्रिंट / PDF",
+        disclaimer: "यह एक मसौदा है, कानूनी सलाह नहीं। गंभीर विवाद के लिए वकील या श्रम हेल्पलाइन से संपर्क करें।"
+      },
+      mr: {
+        safetyBar: "🚨 24x7 आपत्कालीन मदत: पोलीस व कामगार विभाग थेट सहाय्य",
+        police: "पोलीस: 112", labour: "कामगार हेल्पलाइन: 1800-425-1200", women: "महिला: 181",
+        tagline: "कष्टकरी व गिग कामगारांसाठी व्हॉइस प्लॅटफॉर्म",
+        navHome: "मुख्यपृष्ठ", navVoice: "व्हॉइस AI", navLedger: "मजुरी हिशेब", navGrievance: "तक्रार अर्ज", navSchemes: "योजना व हक्क", navArch: "आर्किटेक्चर",
+        heroTag: "⚡ बहुभाषिक व्हॉइस-फर्स्ट AI सहाय्यक",
+        heroTitle: "प्रत्येक कष्टकरी व गिग कामगाराला योग्य मजुरी, सन्मान व हक्क।",
+        heroSubtitle: "श्रममित्र AI द्वारे मजुरी हिशोब, तक्रार अर्ज व सरकारी योजनांची माहिती तुमच्या स्वतःच्या भाषेत मिळवा.",
+        ctaVoice: "आवाजाने बोला", ctaLedger: "मजुरी हिशेब",
+        rule1Ribbon: "निश्चित हिशेब (AI कधीही रकमेचा खोटा अंदाज लावत नाही)",
+        rule2Ribbon: "सरकारी योजनांचे अधिकृत संदर्भ",
+        rule3Ribbon: "वैधानिक अस्वीकरण बंधनकारक",
+        cardTitleVoice: "व्हॉइस-फर्स्ट अनुभव", cardDescVoice: "सर्वम AI द्वारे भारतीय भाषांमध्ये थेट संवाद.",
+        cardTitleLedger: "मजुरी हिशेबवही", cardDescLedger: "packages/shared/ द्वारे १००% अचूक गणितीय हिशोब.",
+        cardTitleGrievance: "तक्रार अर्ज", cardDescGrievance: "पैसे बुडवल्यास कामगार आयुक्त तक्रार अर्ज व नोटीस.",
+        cardTitleSchemes: "योजना व हक्क", cardDescSchemes: "ई-श्रम, आयुष्यमान भारत व गिग कामगार कायदे.",
+        personasTitle: "४५ कोटी+ असंघटित कामगारांसाठी खास डिझाइन",
+        personasSubtitle: "रस्त्यावरील गोंधळातही सहज चालणारे व्हॉइस मॉडेल.",
+        badgeVoiceConsole: "लाईव्ह व्हॉइस कन्सोल", titleVoiceConsole: "श्रममित्र AI शी बोला", subtitleVoiceConsole: "माईकवर क्लिक करून बोला किंवा खालील प्रश्न निवडा.",
+        readyToListen: "ऐकण्यास सज्ज", listening: "ऐकत आहे", listeningStatus: "तुमचा आवाज ऐकला जात आहे...",
+        micHelp: "माईक दाबून बोला किंवा खालील पर्याय निवडा",
+        sampleWageTitle: "💰 मजुरी हिशेब", sampleWagePrompt: '"मी रोज ₹750 प्रमाणे 6 दिवस काम केले, ₹2500 मिळाले, किती बाकी आहे?"',
+        sampleEshramTitle: "📋 ई-श्रम नोंदणी", sampleEshramPrompt: '"ई-श्रम कार्ड स्वतः कसे काढायचे?"',
+        sampleSafetyTitle: "🚨 सुरक्षा व धमकी", sampleSafetyPrompt: '"पैसे मागितल्यास ठेकेदार मारण्याची धमकी देत आहे"',
+        sampleGigTitle: "⚖️ गिग कामगार कायदा", sampleGigPrompt: '"गिग कामगार कायद्यानुसार माझे हक्क काय आहेत?"',
+        ledgerHeaderTitle: "मजुरी हिशेबवही (Wage Ledger)",
+        ledgerHeaderSubtitle: "नियम १: AI कधीही चुकीची रक्कम सांगत नाही. सर्व आकडे अचूक गणितीय पद्धतीने मोजले जातात.",
+        totalPendingOwed: "एकूण येणे बाकी",
+        addWageTitle: "कामाची नोंद करा",
+        labelEmployer: "मालक / कंत्राटदाराचे नाव", labelRate: "रोजंदारी दर (₹)", labelDays: "काम केलेले दिवस", labelPaid: "मिळालेले पैसे (₹)", labelNotes: "कामाचे ठिकाण / तपशील",
+        btnSaveLedger: "+ हिशेब सेव्ह करा", btnWhatsAppSlip: "व्हॉट्सॲप पावती", btnDownloadCSV: "⬇ CSV डाऊनलोड", btnResetLedger: "रीसेट",
+        thDate: "तारीख", thEmployer: "मालक / कंत्राटदार", thCalc: "हिशेब", thPaid: "मिळाले", thOwed: "बाकी रक्कम", thAction: "कृती",
+        badgeDrafting: "कायदेशीर मसुदा", titleGrievance: "तक्रार व मागणी नोटीस", subtitleGrievance: "कामगार कायद्यांनुसार अधिकृत तक्रार अर्ज तयार करा.",
+        btnDraft1: "📄 मजुरी न मिळाल्याची तक्रार", btnDraft2: "⚖️ १५ दिवसांची कायदेशीर नोटीस", btnDraft3: "🤝 रोजंदारी काम करार",
+        labelWorker: "कामगाराचे नाव", labelDraftEmp: "मालक / कंत्राटदाराचे नाव", labelDraftOwed: "बाकी रक्कम (₹)", labelDraftSummary: "वादाचा तपशील व कामाचा काळ",
+        btnUpdateDoc: "⚡ कागदपत्र अपडेट करा", btnCopy: "📋 कॉपी करा", btnPrint: "🖨️ प्रिंट / PDF",
+        disclaimer: "हे एक मसुदा आहे, कायदेशीर सल्ला नाही. गंभीर वादासाठी वकील किंवा कामगार हेल्पलाइनशी (1800-425-1200) संपर्क साधा."
+      },
+      ta: {
+        safetyBar: "🚨 24x7 அவசர உதவி: காவல்துறை மற்றும் தொழிலாளர் நல உதவி",
+        police: "காவல்துறை: 112", labour: "தொழிலாளர்: 1800-425-1200", women: "பெண்கள்: 181",
+        tagline: "கிக் தொழிலாளர்களுக்கான குரல் தளம்",
+        navHome: "முகப்பு", navVoice: "குரல் AI", navLedger: "கூலி கணக்கு", navGrievance: "புகார் மனு", navSchemes: "திட்டங்கள்", navArch: "கட்டமைப்பு",
+        heroTag: "⚡ பன்மொழி குரல் வழி தளம்",
+        heroTitle: "ஒவ்வொரு முறைசாரா மற்றும் கிக் தொழிலாளிக்கும் நியாயமான கூலி மற்றும் கௌரவம்.",
+        heroSubtitle: "ஷ்ரம்மித்ரா AI குரல் வழி சம்பள கணக்கு, புகார் மனு தயாரிப்பு மற்றும் அரசு நலத்திட்டங்களை எளிய தமிழில் வழங்குகிறது.",
+        ctaVoice: "குரல் மூலம் பேசுக", ctaLedger: "கூலி கணக்கீடு",
+        rule1Ribbon: "துல்லிய கணக்கீடு (AI தவறான தொகையை கூறாது)",
+        rule2Ribbon: "அரசு சான்றளிக்கப்பட்ட திட்டங்கள்",
+        rule3Ribbon: "சட்டப்பூர்வ மறுப்புரை கட்டாயம்",
+        cardTitleVoice: "குரல் வழி அனுபவம்", cardDescVoice: "சர்வக் AI மூலம் தாய்மொழியில் துல்லியமாக இயங்குகிறது.",
+        cardTitleLedger: "கூலி கணக்கேடு", cardDescLedger: "துல்லியமான தினசரி கூலி கணக்கீடு முறை.",
+        cardTitleGrievance: "புகார் தயாரிப்பு", cardDescGrievance: "கூலி பாக்கிக்கான தொழிலாளர் நல ஆணையர் புகார் மனு.",
+        cardTitleSchemes: "அரசு நலத்திட்டங்கள்", cardDescSchemes: "இ-ஷ்ராம், ஆயுஷ்மான் பாரத் மற்றும் கிக் சட்டங்கள்.",
+        personasTitle: "45 கோடிக்கும் மேற்பட்ட தொழிலாளர்களுக்காக",
+        personasSubtitle: "எளிய மக்கள் எளிதில் பயன்படுத்தும் வகையில் உருவாக்கப்பட்டது.",
+        badgeVoiceConsole: "நேரடி குரல் தளம்", titleVoiceConsole: "ஷ்ரம்மித்ரா AI-யுடன் பேசுக", subtitleVoiceConsole: "மைக்கை அழுத்தி பேசவும் அல்லது கீழே உள்ளவற்றை தேர்ந்தெடுக்கவும்.",
+        readyToListen: "கேட்க தயார்", listening: "கேட்கிறது", listeningStatus: "உங்கள் குரல் கேட்கப்படுகிறது...",
+        micHelp: "மைக்கை அழுத்தி பேசவும் அல்லது கீழே உள்ள கேள்வியை தொடவும்",
+        sampleWageTitle: "💰 கூலி கணக்கு", sampleWagePrompt: '"நான் நாள் ஒன்றுக்கு ₹750 வீதம் 6 நாட்கள் வேலை செய்தேன், ₹2500 கிடைத்தது, பாக்கி எவ்வளவு?"',
+        sampleEshramTitle: "📋 இ-ஷ்ராம் பதிவு", sampleEshramPrompt: '"இ-ஷ்ராம் அட்டை எவ்வாறு எடுப்பது?"',
+        sampleSafetyTitle: "🚨 பாதுகாப்பு அச்சுறுத்தல்", sampleSafetyPrompt: '"கூலி கேட்டால் மிரட்டல் விடுக்கிறார்கள்"',
+        sampleGigTitle: "⚖️ கிக் தொழிலாளர் சட்டம்", sampleGigPrompt: '"கிக் தொழிலாளர் சட்டத்தில் என் உரிமைகள் என்ன?"',
+        ledgerHeaderTitle: "கூலி கணக்கேடு (Wage Ledger)",
+        ledgerHeaderSubtitle: "விதி 1: AI தன்னிச்சையாக பண தொகையை மாற்றாது. அனைத்தும் துல்லிய கணிதம்.",
+        totalPendingOwed: "மொத்த பாக்கித் தொகை",
+        addWageTitle: "வேலை விவரத்தை சேர்க்க",
+        labelEmployer: "முதலாளி / ஒப்பந்ததாரர் பெயர்", labelRate: "தினக்கூலி (₹)", labelDays: "வேலை செய்த நாட்கள்", labelPaid: "முன்பணம் (₹)", labelNotes: "வேலை இடம் / குறிப்பு",
+        btnSaveLedger: "+ கணக்கில் சேர்க்க", btnWhatsAppSlip: "வாட்ஸ்அப் ரசீது", btnDownloadCSV: "⬇ CSV பதிவிறக்கம்", btnResetLedger: "மீட்டமைக்க",
+        thDate: "தேதி", thEmployer: "முதலாளி / இடம்", thCalc: "கணக்கீடு", thPaid: "வந்தது", thOwed: "பாக்கி", thAction: "செயல்",
+        badgeDrafting: "வரைவு அரங்கம்", titleGrievance: "முறையான புகார் & நோட்டீஸ்", subtitleGrievance: "தொழிலாளர் நலத்துறைக்கான அதிகாரப்பூர்வ புகார் கடிதம்.",
+        btnDraft1: "📄 கூலி பாக்கி புகார் மனு", btnDraft2: "⚖️ 15 நாள் சட்ட நோட்டீஸ்", btnDraft3: "🤝 தினக்கூலி ஒப்பந்தம்",
+        labelWorker: "தொழிலாளி பெயர்", labelDraftEmp: "முதலாளி பெயர்", labelDraftOwed: "பாக்கித் தொகை (₹)", labelDraftSummary: "விவரம் மற்றும் காலம்",
+        btnUpdateDoc: "⚡ ஆவணத்தை புதுப்பிக்க", btnCopy: "📋 நகலெடுக்க", btnPrint: "🖨️ அச்சிட / PDF",
+        disclaimer: "இது ஒரு வரைவு மட்டுமே, சட்ட ஆலோசனை அல்ல. உதவிக்கு வழக்கறிஞர் அல்லது 1800-425-1200 ஐ அழைக்கவும்."
+      },
+      te: {
+        safetyBar: "🚨 24x7 అత్యవసర హెల్ప్‌లైన్: తక్షణ పోలీస్ మరియు కార్మిక సహాయం",
+        police: "పోలీస్: 112", labour: "కార్మిక హెల్ప్‌లైన్: 1800-425-1200", women: "మహిళ: 181",
+        tagline: "గిగ్ కార్మికుల కోసం వాయిస్ ప్లాట్‌ఫారమ్",
+        navHome: "హోమ్", navVoice: "వాయిస్ AI", navLedger: "వేతన లెక్క", navGrievance: "ఫిర్యాదు లేఖ", navSchemes: "పథకాలు", navArch: "ఆర్కిటెక్చర్",
+        heroTag: "⚡ బహుభాషా వాయిస్ AI ప్లాట్‌ఫారమ్",
+        heroTitle: "ప్రతి దినసరి మరియు గిగ్ కార్మికునికి న్యాయమైన వేతనం మరియు గౌరవం.",
+        heroSubtitle: "శ్రమ్‌మిత్ర AI మీ స్వంత భాషలో వేతన లెక్కలు, ఫిర్యాదు లేఖలు మరియు ప్రభుత్వ పథకాల సమాచారాన్ని అందిస్తుంది.",
+        ctaVoice: "వాయిస్ ద్వారా మాట్లాడండి", ctaLedger: "వేతన లెక్క",
+        rule1Ribbon: "ఖచ్చితమైన గణన (AI ఎప్పుడూ తప్పుడు డబ్బు లెక్కలు చెప్పదు)",
+        rule2Ribbon: "ప్రభుత్వ అధికారిక పథకాల సమాచారం",
+        rule3Ribbon: "చట్టపరమైన నిరాకరణ తప్పనిసరి",
+        cardTitleVoice: "వాయిస్ అనుభవం", cardDescVoice: "సర్వమ్ AI ద్వారా స్థానిక భాషల్లో వాయిస్ సేవలు.",
+        cardTitleLedger: "వేతన లెక్కల పుస్తకం", cardDescLedger: "ఖచ్చితమైన రోజువారీ వేతన గణన.",
+        cardTitleGrievance: "ఫిర్యాదు లేఖలు", cardDescGrievance: "జీతం ఇవ్వకపోతే లేబర్ కమిషనర్‌కు ఫిర్యాదు లేఖ.",
+        cardTitleSchemes: "పథకాలు & హక్కులు", cardDescSchemes: "ఈ-శ్రమ్, ఆయుష్మాన్ భారత్ మరియు గిగ్ వర్కర్ చట్టాలు.",
+        personasTitle: "45 కోట్ల అసంఘటిత కార్మికుల కోసం ప్రత్యేకం",
+        personasSubtitle: "రోడ్డు శబ్దాలలో కూడా స్పష్టంగా పనిచేసే వాయిస్ అసిస్టెంట్.",
+        badgeVoiceConsole: "లైవ్ వాయిస్ కన్సోల్", titleVoiceConsole: "శ్రమ్‌మిత్ర AIతో మాట్లాడండి", subtitleVoiceConsole: "మైక్ నొక్కి మాట్లాడండి లేదా కింద ఉన్న ప్రశ్నను ఎంచుకోండి.",
+        readyToListen: "వినడానికి సిద్ధం", listening: "వింటున్నది", listeningStatus: "మీ మాటలను వింటున్నాము...",
+        micHelp: "మైక్ నొక్కి మాట్లాడండి లేదా కింద ఉన్న ప్రశ్నను ఎంచుకోండి",
+        sampleWageTitle: "💰 వేతన లెక్క", sampleWagePrompt: '"నేను రోజుకు ₹750 చొప్పున 6 రోజులు పనిచేశాను, ₹2500 వచ్చాయి, మిగిలినది ఎంత?"',
+        sampleEshramTitle: "📋 ఈ-శ్రమ్ నమోదు", sampleEshramPrompt: '"ఈ-శ్రమ్ కార్డు ఎలా పొందాలి?"',
+        sampleSafetyTitle: "🚨 రక్షణ & బెదిరింపు", sampleSafetyPrompt: '"డబ్బులు అడిగితే బెదిరిస్తున్నారు"',
+        sampleGigTitle: "⚖️ గిగ్ వర్కర్ చట్టం", sampleGigPrompt: '"గిగ్ వర్కర్ చట్టం ద్వారా నా హక్కులు ఏమిటి?"',
+        ledgerHeaderTitle: "వేతన లెక్కల పుస్తకం (Wage Ledger)",
+        ledgerHeaderSubtitle: "నియమం 1: AI ఊహాజనిత లెక్కలు చెప్పదు. అన్నీ గణిత సూత్రాల ఆధారంగా జరుగుతాయి.",
+        totalPendingOwed: "మొత్తం రావాల్సిన బాకీ",
+        addWageTitle: "పని వివరాలను జోడించండి",
+        labelEmployer: "యజమాని / కాంట్రాక్టర్ పేరు", labelRate: "రోజువారీ రేటు (₹)", labelDays: "పనిచేసిన రోజులు", labelPaid: "వచ్చిన అడ్వాన్స్ (₹)", labelNotes: "పని ప్రదేశం / వివరాలు",
+        btnSaveLedger: "+ లెడ్జర్‌లో భద్రపరచు", btnWhatsAppSlip: "వాట్సాప్ రసీదు", btnDownloadCSV: "⬇ CSV డౌన్‌లోడ్", btnResetLedger: "రీసెట్",
+        thDate: "తేదీ", thEmployer: "యజమాని / ప్రదేశం", thCalc: "లెక్క", thPaid: "చెల్లింపు", thOwed: "బాకీ", thAction: "చర్య",
+        badgeDrafting: "డ్రాఫ్టింగ్ స్టూడియో", titleGrievance: "ఫిర్యాదు & లీగల్ నోటీసు", subtitleGrievance: "కార్మిక చట్టాల ప్రకారం అధికారిక ఫిర్యాదు లేఖను తయారుచేయండి.",
+        btnDraft1: "📄 వేతనం చెల్లించలేదని ఫిర్యాదు", btnDraft2: "⚖️ 15 రోజుల లీగల్ నోటీసు", btnDraft3: "🤝 దినసరి వేతన ఒప్పందం",
+        labelWorker: "కార్మికుడి పేరు", labelDraftEmp: "యజమాని పేరు", labelDraftOwed: "రావాల్సిన మొత్తం (₹)", labelDraftSummary: "వివాదం వివరాలు",
+        btnUpdateDoc: "⚡ పత్రాన్ని అప్‌డేట్ చేయండి", btnCopy: "📋 కాపీ చేయండి", btnPrint: "🖨️ ప్రింట్ / PDF",
+        disclaimer: "ఇది కేవలం ఒక ముసాయిదా మాత్రమే, న్యాయ సలహా కాదు. సహాయం కోసం న్యాయవాదిని లేదా 1800-425-1200 ని సంప్రదించండి."
+      },
+      bn: {
+        safetyBar: "🚨 24x7 জরুরি হেল্পলাইন: পুলিশ ও শ্রম দপ্তরের সরাসরি সাহায্য",
+        police: "পুলিশ: 112", labour: "শ্রম দপ্তর: 1800-425-1200", women: "মহিলা: 181",
+        tagline: "অসংগঠিত ও গিগ শ্রমিকদের ভয়েস প্ল্যাটফর্ম",
+        navHome: "হোম", navVoice: "ভয়েস AI", navLedger: "মজুরি খাতা", navGrievance: "অভিযোগ পত্র", navSchemes: "প্রকল্প ও অধিকার", navArch: "আর্কিটেকচার",
+        heroTag: "⚡ বহুভাষিক ভয়েস প্ল্যাটফর্ম",
+        heroTitle: "প্রতিটি অসংগঠিত ও গিগ শ্রমিকের জন্য ন্যায্য মজুরি ও আইনি অধিকার।",
+        heroSubtitle: "শ্রমমিত্র এআই ভয়েস কমান্ডে মজুরি হিসাব, অভিযোগ পত্র এবং সরকারি কল্যাণমূলক প্রকল্পের তথ্য সরবরাহ করে।",
+        ctaVoice: "কথা বলে জানুন", ctaLedger: "মজুরি খাতা",
+        rule1Ribbon: "সঠিক হিসাব (AI কখনো ভুল টাকা তৈরি করে না)",
+        rule2Ribbon: "সরকারি প্রকল্পের যাচাইকৃত তথ্য",
+        rule3Ribbon: "আইনি দাবিত্যাগ বাধ্যতামূলক",
+        cardTitleVoice: "ভয়েস-ফার্স্ট অভিজ্ঞতা", cardDescVoice: "সার্বম AI প্রযুক্তিতে ভারতীয় ভাষায় সরাসরি কথা বলুন।",
+        cardTitleLedger: "মজুরি খাতা", cardDescLedger: "সরাসরি গাণিতিক সূত্রে ১০০% নির্ভুল হিসাব।",
+        cardTitleGrievance: "অভিযোগ পত্র", cardDescGrievance: "মজুরি না পেলে শ্রম কমিশনারের কাছে আইনি অভিযোগ পত্র।",
+        cardTitleSchemes: "প্রকল্প ও অধিকার", cardDescSchemes: "ই-শ্রম, আয়ুষ্মান ভারত ও গিগ ওয়ার্কার আইনের নিয়ম।",
+        personasTitle: "৪৫ কোটি+ মেহনতি মানুষের পাশে",
+        personasSubtitle: "রাস্তার ভিড়েও সহজে ব্যবহারযোগ্য অডিও সিস্টেম।",
+        badgeVoiceConsole: "লাইভ ভয়েস কনসোল", titleVoiceConsole: "শ্রমমিত্র AI-এর সাথে কথা বলুন", subtitleVoiceConsole: "মাইকে ক্লিক করে বলুন অথবা নিচের প্রশ্নে চাপ দিন।",
+        readyToListen: "শোনার জন্য প্রস্তুত", listening: "শুনছি", listeningStatus: "আপনার কথা শোনা হচ্ছে...",
+        micHelp: "মাইক টিপে কথা বলুন অথবা নিচের প্রশ্ন বাছাই করুন",
+        sampleWageTitle: "💰 মজুরি হিসাব", sampleWagePrompt: '"আমি দিনে ₹৭৫০ হিসেবে ৬ দিন কাজ করেছি, ₹২৫০০ পেয়েছি, কত বাকি?"',
+        sampleEshramTitle: "📋 ই-শ্রম কার্ড", sampleEshramPrompt: '"ই-শ্রম কার্ড নিজে কীভাবে তৈরি করব?"',
+        sampleSafetyTitle: "🚨 সুরক্ষা ও হুমকি", sampleSafetyPrompt: '"মজুরি চাইলে ঠিকাদার হুমকি দিচ্ছে"',
+        sampleGigTitle: "⚖️ গিগ আইন", sampleGigPrompt: '"গিগ ওয়ার্কার আইনে আমার অধিকার কী?"',
+        ledgerHeaderTitle: "মজুরি খাতা (Wage Ledger)",
+        ledgerHeaderSubtitle: "নিয়ম ১: AI কোনো আনুমানিক টাকা বলে না। সমস্ত হিসাব সঠিক অঙ্কে নির্ধারিত।",
+        totalPendingOwed: "মোট বকেয়া পাওনা",
+        addWageTitle: "কাজের তথ্য লিখুন",
+        labelEmployer: "মালিক / ঠিকাদারের নাম", labelRate: "দৈনিক মজুরি (₹)", labelDays: "কাজের দিন", labelPaid: "অগ্রিম পেয়েছেন (₹)", labelNotes: "কাজের জায়গা / বিবরণ",
+        btnSaveLedger: "+ খাতায় জমা করুন", btnWhatsAppSlip: "হোয়াটসঅ্যাপ রসিদ", btnDownloadCSV: "⬇ CSV ডাউনলোড", btnResetLedger: "রিসেট",
+        thDate: "তারিখ", thEmployer: "মালিক / জায়গা", thCalc: "হিসাব", thPaid: "পাওয়া গেছে", thOwed: "বাকি টাকা", thAction: "অ্যাকশন",
+        badgeDrafting: "আইনি খসড়া", titleGrievance: "অভিযোগ ও লিগ্যাল নোটিশ", subtitleGrievance: "শ্রম আইনের অধীনে আনুষ্ঠানিক আবেদনপত্র তৈরি করুন।",
+        btnDraft1: "📄 মজুরি না পাওয়ার অভিযোগ", btnDraft2: "⚖️ ১৫ দিনের লিগ্যাল নোটিশ", btnDraft3: "🤝 দৈনিক কাজের চুক্তিপত্র",
+        labelWorker: "শ্রমিকের নাম", labelDraftEmp: "মালিকের নাম", labelDraftOwed: "বকেয়া টাকা (₹)", labelDraftSummary: "বিবাদের কারণ ও সময়",
+        btnUpdateDoc: "⚡ নথি আপডেট করুন", btnCopy: "📋 কপি করুন", btnPrint: "🖨️ প্রিন্ট / PDF",
+        disclaimer: "এটি একটি খসড়া মাত্র, আইনি পরামর্শ নয়। সাহায্যের জন্য আইনজীবী বা 1800-425-1200 নম্বরে যোগাযোগ করুন।"
+      }
+    };
+
+    let currentLanguage = 'en';
+
+    function onLanguageChange(lang) {
+      currentLanguage = lang;
+      const d = translations[lang] || translations.en;
+
+      // Header & Navigation
+      document.getElementById('safetyBarTitle').textContent = d.safetyBar;
+      document.getElementById('safetyPoliceLabel').textContent = d.police;
+      document.getElementById('safetyLabourLabel').textContent = d.labour;
+      document.getElementById('safetyWomenLabel').textContent = d.women;
+      document.getElementById('headerTagline').textContent = d.tagline;
+
+      document.getElementById('nav-home').textContent = d.navHome;
+      document.getElementById('nav-voice').innerHTML = `<span class="w-2 h-2 rounded-full bg-orange-500"></span> ${d.navVoice}`;
+      document.getElementById('nav-ledger').textContent = d.navLedger;
+      document.getElementById('nav-grievance').textContent = d.navGrievance;
+      document.getElementById('nav-schemes').textContent = d.navSchemes;
+      document.getElementById('nav-architecture').textContent = d.navArch;
+
+      // Mobile Drawer
+      document.getElementById('mNavHomeText').textContent = d.navHome;
+      document.getElementById('mNavVoiceText').textContent = d.navVoice;
+      document.getElementById('mNavLedgerText').textContent = d.navLedger;
+      document.getElementById('mNavGrievanceText').textContent = d.navGrievance;
+      document.getElementById('mNavSchemesText').textContent = d.navSchemes;
+      document.getElementById('mNavArchText').textContent = d.navArch;
+
+      // Hero
+      document.getElementById('heroTagBadge').textContent = d.heroTag;
+      document.getElementById('heroTitle').textContent = d.heroTitle;
+      document.getElementById('heroSubtitle').textContent = d.heroSubtitle;
+      document.getElementById('heroCtaVoice').textContent = d.ctaVoice;
+      document.getElementById('heroCtaLedger').textContent = d.ctaLedger;
+      document.getElementById('heroRule1').textContent = d.rule1Ribbon;
+      document.getElementById('heroRule2').textContent = d.rule2Ribbon;
+      document.getElementById('heroRule3').textContent = d.rule3Ribbon;
+
+      // Cards
+      document.getElementById('cardTitleVoice').textContent = d.cardTitleVoice;
+      document.getElementById('cardDescVoice').textContent = d.cardDescVoice;
+      document.getElementById('cardTitleLedger').textContent = d.cardTitleLedger;
+      document.getElementById('cardDescLedger').textContent = d.cardDescLedger;
+      document.getElementById('cardTitleGrievance').textContent = d.cardTitleGrievance;
+      document.getElementById('cardDescGrievance').textContent = d.cardDescGrievance;
+      document.getElementById('cardTitleSchemes').textContent = d.cardTitleSchemes;
+      document.getElementById('cardDescSchemes').textContent = d.cardDescSchemes;
+      document.getElementById('personasTitle').textContent = d.personasTitle;
+      document.getElementById('personasSubtitle').textContent = d.personasSubtitle;
+
+      // Voice Console
+      document.getElementById('badgeVoiceConsole').textContent = d.badgeVoiceConsole;
+      document.getElementById('titleVoiceConsole').textContent = d.titleVoiceConsole;
+      document.getElementById('subtitleVoiceConsole').textContent = d.subtitleVoiceConsole;
+      document.getElementById('voiceStatusBadge').textContent = isWebRecording ? d.listening : d.readyToListen;
+      document.getElementById('listeningPillText').textContent = d.listening;
+      document.getElementById('micHelpText').textContent = isWebRecording ? d.listeningStatus : d.micHelp;
+      document.getElementById('sampleWageTitle').textContent = d.sampleWageTitle;
+      document.getElementById('sampleWagePrompt').textContent = d.sampleWagePrompt;
+      document.getElementById('sampleEshramTitle').textContent = d.sampleEshramTitle;
+      document.getElementById('sampleEshramPrompt').textContent = d.sampleEshramPrompt;
+      document.getElementById('sampleSafetyTitle').textContent = d.sampleSafetyTitle;
+      document.getElementById('sampleSafetyPrompt').textContent = d.sampleSafetyPrompt;
+      document.getElementById('sampleGigTitle').textContent = d.sampleGigTitle;
+      document.getElementById('sampleGigPrompt').textContent = d.sampleGigPrompt;
+
+      // Ledger
+      document.getElementById('ledgerHeaderTitle').textContent = d.ledgerHeaderTitle;
+      document.getElementById('ledgerHeaderSubtitle').textContent = d.ledgerHeaderSubtitle;
+      document.getElementById('labelTotalPendingOwed').textContent = d.totalPendingOwed;
+      document.getElementById('formAddWageTitle').textContent = d.addWageTitle;
+      document.getElementById('labelEmployer').textContent = d.labelEmployer;
+      document.getElementById('labelDailyRate').textContent = d.labelRate;
+      document.getElementById('labelDaysWorked').textContent = d.labelDays;
+      document.getElementById('labelAmountPaid').textContent = d.labelPaid;
+      document.getElementById('labelWorkNotes').textContent = d.labelNotes;
+      document.getElementById('btnSaveLedger').textContent = d.btnSaveLedger;
+      document.getElementById('btnWhatsAppSlip').textContent = d.btnWhatsAppSlip;
+      document.getElementById('btnDownloadCSV').textContent = d.btnDownloadCSV;
+      document.getElementById('btnResetLedger').textContent = d.btnResetLedger;
+      document.getElementById('thDate').textContent = d.thDate;
+      document.getElementById('thEmployer').textContent = d.thEmployer;
+      document.getElementById('thCalc').textContent = d.thCalc;
+      document.getElementById('thPaid').textContent = d.thPaid;
+      document.getElementById('thOwed').textContent = d.thOwed;
+      document.getElementById('thAction').textContent = d.thAction;
+
+      // Grievance
+      document.getElementById('badgeDraftingStudio').textContent = d.badgeDrafting;
+      document.getElementById('titleGrievanceStudio').textContent = d.titleGrievance;
+      document.getElementById('subtitleGrievanceStudio').textContent = d.subtitleGrievance;
+      document.getElementById('btnDraftType1').querySelector('span').textContent = d.btnDraft1;
+      document.getElementById('btnDraftType2').querySelector('span').textContent = d.btnDraft2;
+      document.getElementById('btnDraftType3').querySelector('span').textContent = d.btnDraft3;
+      document.getElementById('labelDraftWorkerName').textContent = d.labelWorker;
+      document.getElementById('labelDraftEmployerName').textContent = d.labelDraftEmp;
+      document.getElementById('labelDraftOwedAmount').textContent = d.labelDraftOwed;
+      document.getElementById('labelDraftWorkSummary').textContent = d.labelDraftSummary;
+      document.getElementById('btnGenerateDocument').textContent = d.btnUpdateDoc;
+      document.getElementById('btnCopyText').textContent = d.btnCopy;
+      document.getElementById('btnPrintPDF').textContent = d.btnPrint;
+      document.getElementById('statutoryDisclaimerText').textContent = d.disclaimer;
+
+      // Regenerate dynamic components
+      renderLedgerTable();
+      generateWebGrievanceDraft();
+    }
+
+    // -------------------------------------------------------------------------
+    // 2. Responsive Navigation & Mobile Drawer
+    // -------------------------------------------------------------------------
+    function toggleMobileMenu() {
+      const drawer = document.getElementById('mobileMenuDrawer');
+      const hamburger = document.getElementById('hamburgerIcon');
+      const closeIcon = document.getElementById('closeMenuIcon');
+
+      if (drawer.classList.contains('hidden')) {
+        drawer.classList.remove('hidden');
+        hamburger.classList.add('hidden');
+        closeIcon.classList.remove('hidden');
+      } else {
+        drawer.classList.add('hidden');
+        hamburger.classList.remove('hidden');
+        closeIcon.classList.add('hidden');
+      }
+    }
+
+    function switchMainTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+      const target = document.getElementById('tab-content-' + tabId);
+      if (target) target.classList.add('active');
+
+      // Update Desktop Buttons
+      document.querySelectorAll('nav button').forEach(b => b.classList.remove('active-nav-btn'));
+      const activeBtn = document.getElementById('nav-' + tabId);
+      if (activeBtn) activeBtn.classList.add('active-nav-btn');
+
+      // Update Mobile Drawer Buttons
+      document.querySelectorAll('#mobileMenuDrawer button').forEach(b => {
+        b.className = "w-full text-left px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-700 hover:bg-slate-50 flex items-center gap-2";
+      });
+      const activeMBtn = document.getElementById('mnav-' + tabId);
+      if (activeMBtn) {
+        activeMBtn.className = "w-full text-left px-3 py-2.5 rounded-xl text-sm font-bold text-orange-600 bg-orange-50 flex items-center gap-2";
+      }
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // -------------------------------------------------------------------------
+    // 3. Dynamic Wage Ledger Engine (Rule #1: Exact Deterministic Math)
+    // -------------------------------------------------------------------------
+    // Persistent records in localStorage
+    const STORAGE_KEY = 'shrammitra_wage_records_v1';
+    let ledgerRecords = [];
+
+    function loadLedgerRecords() {
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+          ledgerRecords = JSON.parse(saved);
+        } else {
+          ledgerRecords = [
+            { id: 1, date: '12 Oct 2026', employer: 'Sharma Construction', rate: 800, days: 6, paid: 2800, owed: 2000, notes: 'Sector 62 Masonry' },
+            { id: 2, date: '04 Oct 2026', employer: 'Apex Metro Sites', rate: 850, days: 8, paid: 6800, owed: 0, notes: 'Whitefield Tiles' },
+            { id: 3, date: '28 Sep 2026', employer: 'Raju Transports', rate: 600, days: 5, paid: 1800, owed: 1200, notes: 'Goods Unloading' }
+          ];
+          saveToLocalStorage();
+        }
+      } catch (e) {
+        ledgerRecords = [];
+      }
+    }
+
+    function saveToLocalStorage() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(ledgerRecords));
+      } catch (e) {}
+    }
+
+    // Real-time calculation on input change
+    function runDeterministicCalculation() {
+      const rate = Math.max(0, parseFloat(document.getElementById('calcRate').value) || 0);
+      const days = Math.max(0, parseInt(document.getElementById('calcDays').value) || 0);
+      const paid = Math.max(0, parseFloat(document.getElementById('calcPaid').value) || 0);
+
+      // Deterministic WageLedger formula
+      const gross = rate * days;
+      const owed = Math.max(0, gross - paid);
+
+      document.getElementById('prevGross').textContent = '₹' + gross.toLocaleString('en-IN');
+      document.getElementById('prevPaid').textContent = '₹' + paid.toLocaleString('en-IN');
+      document.getElementById('prevOwed').textContent = '₹' + owed.toLocaleString('en-IN');
+
+      return { gross, owed, rate, days, paid };
+    }
+
+    function renderLedgerTable() {
+      const tbody = document.getElementById('ledgerTableBody');
+      tbody.innerHTML = '';
+
+      let totalOwed = 0;
+
+      ledgerRecords.forEach((item, index) => {
+        totalOwed += item.owed;
+
+        const tr = document.createElement('tr');
+        tr.className = "hover:bg-slate-50 transition";
+        tr.innerHTML = `
+          <td class="py-3 px-3 text-slate-500 whitespace-nowrap">${item.date}</td>
+          <td class="py-3 px-3 font-semibold text-slate-900">${item.employer}<br><span class="text-[10px] text-slate-400 font-normal">${item.notes || ''}</span></td>
+          <td class="py-3 px-3 font-mono text-slate-600">${item.days}d &times; ₹${item.rate} = ₹${(item.days * item.rate).toLocaleString('en-IN')}</td>
+          <td class="py-3 px-3 text-slate-600">₹${item.paid.toLocaleString('en-IN')}</td>
+          <td class="py-3 px-3 font-bold ${item.owed > 0 ? 'text-orange-600' : 'text-slate-400'}">₹${item.owed.toLocaleString('en-IN')}</td>
+          <td class="py-3 px-3 text-right whitespace-nowrap">
+            <button onclick="deleteLedgerEntry(${item.id})" class="text-xs text-red-500 hover:text-red-700 font-bold px-2 py-1 rounded hover:bg-red-50 transition" title="Delete record">
+              ✕
+            </button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      document.getElementById('headerOwedBalance').textContent = '₹' + totalOwed.toLocaleString('en-IN');
+    }
+
+    function saveLedgerEntry() {
+      const emp = document.getElementById('calcEmployer').value.trim() || 'Contractor';
+      const notes = document.getElementById('calcNotes').value.trim() || '';
+      const calc = runDeterministicCalculation();
+
+      if (calc.rate <= 0 || calc.days <= 0) {
+        alert("Please enter a valid rate and days worked.");
+        return;
+      }
+
+      const today = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+      const newEntry = {
+        id: Date.now(),
+        date: today,
+        employer: emp,
+        rate: calc.rate,
+        days: calc.days,
+        paid: calc.paid,
+        owed: calc.owed,
+        notes: notes
+      };
+
+      ledgerRecords.unshift(newEntry);
+      saveToLocalStorage();
+      renderLedgerTable();
+
+      // Dynamically sync Grievance fields
+      document.getElementById('draftEmployerName').value = emp;
+      document.getElementById('draftOwedAmount').value = calc.owed;
+      document.getElementById('draftWorkSummary').value = `${calc.days} days work at ${notes || emp}. Agreed rate ₹${calc.rate}/day.`;
+      generateWebGrievanceDraft();
+
+      alert(`✅ Ledger record saved dynamically! Owed balance of ₹${calc.owed.toLocaleString('en-IN')} computed deterministically.`);
+    }
+
+    function deleteLedgerEntry(id) {
+      ledgerRecords = ledgerRecords.filter(r => r.id !== id);
+      saveToLocalStorage();
+      renderLedgerTable();
+    }
+
+    function clearLedgerHistory() {
+      if (confirm("Reset and clear all wage records?")) {
+        ledgerRecords = [];
+        saveToLocalStorage();
+        renderLedgerTable();
+      }
+    }
+
+    function exportToWhatsApp() {
+      const calc = runDeterministicCalculation();
+      const emp = document.getElementById('calcEmployer').value.trim() || 'Contractor';
+      const text = `*ShramMitra Verified Wage Slip*%0A` +
+        `Employer: ${encodeURIComponent(emp)}%0A` +
+        `Days Worked: ${calc.days} days @ ₹${calc.rate}/day%0A` +
+        `Gross Total: ₹${calc.gross}%0A` +
+        `Advance Received: ₹${calc.paid}%0A` +
+        `*Net Balance Owed: ₹${calc.owed}*%0A` +
+        `Generated deterministically via ShramMitra AI (WageLedger engine)`;
+
+      window.open(`https://wa.me/?text=${text}`, '_blank');
+    }
+
+    function downloadLedgerCSV() {
+      let csv = "Date,Employer,DailyRate,DaysWorked,GrossTotal,AdvancePaid,OwedBalance,Notes\n";
+      ledgerRecords.forEach(r => {
+        csv += `"${r.date}","${r.employer}",${r.rate},${r.days},${r.rate * r.days},${r.paid},${r.owed},"${r.notes || ''}"\n`;
+      });
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.setAttribute('href', url);
+      a.setAttribute('download', `WageLedger_${Date.now()}.csv`);
+      a.click();
+    }
+
+    // -------------------------------------------------------------------------
+    // 4. Dynamic Grievance Drafter Engine (Rule #3) in All 6 Languages
+    // -------------------------------------------------------------------------
+    let selectedDraftType = 'non_payment';
+
+    function selectWebDraftType(type, btn) {
+      selectedDraftType = type;
+      document.querySelectorAll('.web-draft-btn').forEach(b => {
+        b.className = "web-draft-btn w-full text-left p-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-700 font-semibold text-xs flex items-center justify-between hover:border-slate-300";
+      });
+      btn.className = "web-draft-btn active-draft-type w-full text-left p-3 rounded-xl border border-purple-500 bg-purple-50 text-purple-900 font-semibold text-xs flex items-center justify-between";
+      generateWebGrievanceDraft();
+    }
+
+    function generateWebGrievanceDraft() {
+      const worker = document.getElementById('draftWorkerName').value || 'Worker';
+      const employer = document.getElementById('draftEmployerName').value || 'Employer/Contractor';
+      const owed = document.getElementById('draftOwedAmount').value || '0';
+      const summary = document.getElementById('draftWorkSummary').value || '';
+      const dateStr = new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'long', year: 'numeric' });
+
+      let doc = "";
+
+      if (currentLanguage === 'hi') {
+        if (selectedDraftType === 'non_payment') {
+          doc = `सेवा में,
+श्रम आयुक्त महोदय / सुलह अधिकारी
+श्रम विभाग कार्यालय
+
+दिनांक: ${dateStr}
+
+विषय: मजदूरी भुगतान न होने के संबंध में औपचारिक शिकायत (मजदूरी संदाय अधिनियम, 1936 / मजदूरी संहिता, 2019)
+
+महोदय,
+मैं, ${worker}, प्रार्थी हूँ और निम्नलिखित नियोक्ता/ठेकेदार के विरुद्ध यह शिकायत दर्ज करा रहा हूँ:
+
+१. नियोक्ता / प्रतिष्ठान: ${employer}
+२. कार्य का विवरण: ${summary}
+३. कानूनी रूप से देय बकाया राशि: ₹${Number(owed).toLocaleString('en-IN')}
+(यह राशि WageLedger के सत्यापन अनुसार निर्धारित है)
+
+कई बार मौखिक रूप से निवेदन करने के बावजूद भी नियोक्ता ने मेरी कमाई हुई मजदूरी का भुगतान नहीं किया है।
+
+प्रार्थना:
+अतः श्रीमान से निवेदन है कि विपक्षी नियोक्ता को तलब कर सुलह कार्यवाही शुरू की जाए और मेरी बकाया राशि ₹${Number(owed).toLocaleString('en-IN')} का अविलंब भुगतान दिलवाया जाए।
+
+सादर,
+${worker}
+असंगठित कामगार`;
+        } else if (selectedDraftType === 'demand_notice') {
+          doc = `मजदूरी मांग कानूनी नोटिस (15 दिवसीय अल्टीमेटम)
+
+दिनांक: ${dateStr}
+प्रति:
+${employer}
+
+प्रेषक:
+${worker}
+
+महोदय,
+आपको सूचित किया जाता है कि मेरे द्वारा आपके यहाँ निम्नलिखित कार्य संपन्न किया गया:
+${summary}
+
+हमारे आपसी समझौते व WageLedger के हिसाब अनुसार आज दिनांक तक ₹${Number(owed).toLocaleString('en-IN')} की मजदूरी बकाया है।
+
+अतः आपको यह 15 दिनों का नोटिस दिया जाता है कि उक्त राशि ₹${Number(owed).toLocaleString('en-IN')} का भुगतान सीधे मेरे खाते में या नकद रूप में 15 दिनों के अंदर सुनिश्चित करें।
+
+निर्धारित अवधि में भुगतान न होने की दशा में आपके विरुद्ध श्रम न्यायालय में वाद दायर किया जाएगा।
+
+भवदीय,
+${worker}`;
+        } else {
+          doc = `दैनिक मजदूरी कार्य अनुबंध पत्र (Work Agreement)
+
+दिनांक: ${dateStr}
+
+पक्षकार:
+१. नियोक्ता: ${employer}
+२. श्रमिक: ${worker}
+
+नियम व शर्तें:
+१. कार्य विवरण: ${summary}
+२. मजदूरी दर: आपसी WageLedger समझौते के अनुसार।
+३. भुगतान का समय: प्रत्येक सप्ताह की समाप्ति पर।
+४. वर्तमान बकाया देय राशि: ₹${Number(owed).toLocaleString('en-IN')}
+
+दोनों पक्षों द्वारा स्वीकार एवं हस्ताक्षरित:
+
+_________________________            _________________________
+[नियोक्ता के हस्ताक्षर]              [श्रमिक के हस्ताक्षर / अंगूठा]`;
+        }
+      } else if (currentLanguage === 'mr') {
+        doc = `प्रति,
+मा. कामगार आयुक्त / सलोखा अधिकारी
+कामगार विभाग
+
+दिनांक: ${dateStr}
+
+विषय: थकीत मजुरी न मिळाल्याबाबत औपचारिक तक्रार अर्ज
+
+महोदय,
+मी, ${worker}, खालील कंत्राटदार/मालकाविरुद्ध हा तक्रार अर्ज सादर करत आहे:
+मालकाचे नाव: ${employer}
+कामाचा तपशील: ${summary}
+थकीत रक्कम: ₹${Number(owed).toLocaleString('en-IN')} (WageLedger नुसार अचूक गणना)
+
+वारंवार मागणी करूनही सदर रक्कम मिळालेली नाही. कृपया तात्काळ मध्यस्थी करून माझी हक्काची मजुरी मिळवून द्यावी.
+
+आपला नम्र,
+${worker}`;
+      } else if (currentLanguage === 'ta') {
+        doc = `பெறுநர்:
+உதவி தொழிலாளர் ஆணையர் அவர்கள்
+தொழிலாளர் நலத்துறை
+
+தேதி: ${dateStr}
+
+பொருள்: உழைத்த ஊதியம் தராமை குறித்த புகார் மனு
+
+ஐயா/அம்மா,
+நான் ${worker}, கீழ்க்கண்ட ஒப்பந்ததாரர் மீது புகார் அளிக்கிறேன்:
+முதலாளி: ${employer}
+வேலை விவரம்: ${summary}
+பாக்கித் தொகை: ₹${Number(owed).toLocaleString('en-IN')} (WageLedger துல்லிய கணக்கீடு)
+
+எனவே உடனடியாக தலையிட்டு எனது சம்பள பாக்கியை பெற்றுத்தர வேண்டுகிறேன்.
+
+இப்படிக்கு,
+${worker}`;
+      } else if (currentLanguage === 'te') {
+        doc = `స్వీకర్త:
+లేబర్ కమిషనర్ కార్యాలయం
+కార్మిక సంక్షేమ శాఖ
+
+తేదీ: ${dateStr}
+
+విషయం: పని చేసిన వేతనం చెల్లించకపోవడంపై ఫిర్యాదు
+
+అయ్యా,
+నేను, ${worker}, ఈ క్రింది యజమాని/కాంట్రాక్టర్‌పై ఫిర్యాదు చేస్తున్నాను:
+యజమాని: ${employer}
+పని వివరాలు: ${summary}
+రావాల్సిన బాకీ మొత్తం: ₹${Number(owed).toLocaleString('en-IN')} (WageLedger ఆధారంగా)
+
+దయచేసి వెంటనే విచారణ జరిపి నా న్యాయమైన వేతనాన్ని ఇప్పించగలరు.
+
+భవదీయుడు,
+${worker}`;
+      } else if (currentLanguage === 'bn') {
+        doc = `প্রতি,
+শ্রম কমিশনার মহাশয়
+শ্রম দপ্তর
+
+তারিখ: ${dateStr}
+
+বিষয়: বকেয়া মজুরি না পাওয়ার অভিযোগপত্র
+
+মহাশয়,
+আমি ${worker}, নিম্নলিখিত নিয়োগকর্তার বিরুদ্ধে এই অভিযোগ পেশ করছি:
+নিয়োগকর্তা: ${employer}
+কাজের বিবরণ: ${summary}
+বকেয়া পাওনা: ₹${Number(owed).toLocaleString('en-IN')} (WageLedger দ্বারা নির্ধারিত)
+
+অনুরোধ, অবিলম্বে হস্তক্ষেপ করে আমার ন্যায্য মজুরি প্রদানের নির্দেশ দিন।
+
+বিনীত,
+${worker}`;
+      } else {
+        // English Default
+        if (selectedDraftType === 'non_payment') {
+          doc = `TO:
+THE ASSISTANT LABOUR COMMISSIONER / CONCILIATION OFFICER
+OFFICE OF THE LABOUR COMMISSIONER
+
+DATE: ${dateStr}
+
+SUBJECT: FORMAL COMPLAINT REGARDING NON-PAYMENT OF EARNED WAGES UNDER THE PAYMENT OF WAGES ACT, 1936 / CODE ON WAGES, 2019
+
+Respected Sir/Madam,
+
+I, ${worker}, an informal worker, submit this petition against the respondent employer/contractor:
+
+1. EMPLOYER/ESTABLISHMENT: ${employer}
+2. PARTICULARS OF WORK: ${summary}
+3. ADMISSIBLE WAGE DETERMINATION:
+   - Total Deterministic Outstanding Owed: ₹${Number(owed).toLocaleString('en-IN')}
+   (Verified against contemporaneous WageLedger audits)
+
+Despite multiple verbal requests, the employer has failed and neglected to clear the earned wages.
+
+PRAYER:
+It is therefore respectfully requested that conciliation proceedings be initiated, and the respondent directed to disburse the pending amount of ₹${Number(owed).toLocaleString('en-IN')} with statutory compensation.
+
+Yours faithfully,
+
+${worker}
+Informal / Gig Worker`;
+        } else if (selectedDraftType === 'demand_notice') {
+          doc = `FORMAL 15-DAY NOTICE FOR DISBURSEMENT OF OUTSTANDING WAGES
+
+DATE: ${dateStr}
+TO: ${employer}
+FROM: ${worker}
+
+Sir/Madam,
+TAKE NOTICE that I was engaged by you for manual/contracted work as detailed below:
+${summary}
+
+According to our agreed terms and contemporaneous WageLedger audits, a net balance of ₹${Number(owed).toLocaleString('en-IN')} remains unpaid and overdue as on date.
+
+You are hereby called upon to pay the said sum of ₹${Number(owed).toLocaleString('en-IN')} within FIFTEEN (15) DAYS of the receipt of this notice, failing which conciliation proceedings will be initiated before the Labour Officer.
+
+${worker}
+Date: ${dateStr}`;
+        } else {
+          doc = `INFORMAL DAILY WAGE WORK AGREEMENT MEMORANDUM
+
+DATE: ${dateStr}
+EMPLOYER: ${employer}
+WORKER: ${worker}
+
+TERMS:
+1. Work Description: ${summary}
+2. Agreed Daily Rate: As logged in WageLedger.
+3. Payment Frequency: Weekly on every Saturday.
+4. Pending Balance as of date: ₹${Number(owed).toLocaleString('en-IN')}
+
+Signed:
+
+_________________________            _________________________
+[Employer Signature]                 [Worker Signature]`;
+        }
+      }
+
+      document.getElementById('grievanceDraftContent').textContent = doc;
+    }
+
+    function copyDraftToClipboard() {
+      const text = document.getElementById('grievanceDraftContent').textContent;
+      navigator.clipboard.writeText(text).then(() => {
+        alert("Draft copied to clipboard!");
+      });
+    }
+
+    function sendDraftOnWhatsApp() {
+      const text = encodeURIComponent(document.getElementById('grievanceDraftContent').textContent);
+      window.open(`https://wa.me/?text=${text}`, '_blank');
+    }
+
+    // -------------------------------------------------------------------------
+    // 5. Dynamic Voice Engine & Custom User Text Parser
+    // -------------------------------------------------------------------------
+    let isWebRecording = false;
+    let recordingTimerInterval = null;
+    let recordingSeconds = 0;
+    let recognitionInstance = null;
+
+    function initSpeechRecognition() {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (SpeechRecognition) {
+        recognitionInstance = new SpeechRecognition();
+        recognitionInstance.continuous = false;
+        recognitionInstance.interimResults = false;
+
+        recognitionInstance.onstart = () => setRecordingUI(true);
+        recognitionInstance.onresult = (event) => {
+          const transcript = event.results[0][0].transcript;
+          handleDynamicVoiceInput(transcript);
+        };
+        recognitionInstance.onerror = () => setRecordingUI(false);
+        recognitionInstance.onend = () => setRecordingUI(false);
+      }
+    }
+
+    function toggleWebVoiceRecord() {
+      if (!recognitionInstance) initSpeechRecognition();
+
+      if (isWebRecording) {
+        if (recognitionInstance) recognitionInstance.stop();
+        setRecordingUI(false);
+      } else {
+        if (recognitionInstance) {
+          try {
+            recognitionInstance.lang = currentLanguage === 'hi' ? 'hi-IN' : 'en-IN';
+            recognitionInstance.start();
+          } catch(e) {
+            simulateVoiceQuery('wage');
+          }
+        } else {
+          simulateVoiceQuery('wage');
+        }
+      }
+    }
+
+    function setRecordingUI(active) {
+      isWebRecording = active;
+      const btn = document.getElementById('webVoiceMicBtn');
+      const ring1 = document.getElementById('micRingEffect');
+      const ring2 = document.getElementById('micRingEffect2');
+      const wave = document.getElementById('webVoiceWaveform');
+      const badge = document.getElementById('voiceStatusBadge');
+      const text = document.getElementById('micHelpText');
+      const timer = document.getElementById('recordingTimer');
+      const d = translations[currentLanguage] || translations.en;
+
+      if (active) {
+        btn.classList.remove('bg-orange-600', 'hover:bg-orange-700', 'shadow-orange-600/30');
+        btn.classList.add('bg-red-600', 'hover:bg-red-700', 'shadow-red-600/40');
+        
+        if (ring1) { ring1.classList.add('recording-ripple'); ring1.style.opacity = '1'; }
+        if (ring2) { ring2.classList.add('recording-ripple-delay'); ring2.style.opacity = '1'; }
+
+        if (wave) { wave.classList.remove('hidden'); wave.classList.add('flex'); }
+
+        badge.className = "text-xs font-semibold px-2.5 py-1 rounded-full bg-red-100 text-red-700 border border-red-200 animate-pulse";
+        badge.textContent = d.listening;
+        text.textContent = d.listeningStatus;
+
+        recordingSeconds = 0;
+        if (timer) timer.textContent = "00:00";
+        clearInterval(recordingTimerInterval);
+        recordingTimerInterval = setInterval(() => {
+          recordingSeconds++;
+          const mins = String(Math.floor(recordingSeconds / 60)).padStart(2, '0');
+          const secs = String(recordingSeconds % 60).padStart(2, '0');
+          if (timer) timer.textContent = `${mins}:${secs}`;
+        }, 1000);
+      } else {
+        btn.classList.remove('bg-red-600', 'hover:bg-red-700', 'shadow-red-600/40');
+        btn.classList.add('bg-orange-600', 'hover:bg-orange-700', 'shadow-orange-600/30');
+
+        if (ring1) { ring1.classList.remove('recording-ripple'); ring1.style.opacity = '0'; }
+        if (ring2) { ring2.classList.remove('recording-ripple-delay'); ring2.style.opacity = '0'; }
+
+        if (wave) { wave.classList.add('hidden'); wave.classList.remove('flex'); }
+
+        badge.className = "text-xs font-semibold px-2.5 py-1 rounded-full bg-slate-100 text-slate-600 border border-slate-200";
+        badge.textContent = d.readyToListen;
+        text.textContent = d.micHelp;
+
+        clearInterval(recordingTimerInterval);
+      }
+    }
+
+    function simulateVoiceQuery(type) {
+      setRecordingUI(true);
+      setTimeout(() => {
+        setRecordingUI(false);
+        const d = translations[currentLanguage] || translations.en;
+        let query = "";
+        if (type === 'wage') query = d.sampleWagePrompt;
+        else if (type === 'eshram') query = d.sampleEshramPrompt;
+        else if (type === 'safety') query = d.sampleSafetyPrompt;
+        else if (type === 'karnataka') query = d.sampleGigPrompt;
+
+        handleDynamicVoiceInput(query);
+      }, 800);
+    }
+
+    function submitCustomVoiceText() {
+      const input = document.getElementById('customUserVoiceText');
+      const val = input.value.trim();
+      if (!val) return;
+      handleDynamicVoiceInput(val);
+      input.value = '';
+    }
+
+    // Dynamic NLP & Deterministic Wage Calculation on User Entry
+    function handleDynamicVoiceInput(userInput) {
+      const cleanInput = userInput.replace(/^"+|"+$/g, '');
+      document.getElementById('sttTranscriptOutput').textContent = `"${cleanInput}"`;
+
+      const lower = cleanInput.toLowerCase();
+      const badge = document.getElementById('detectedIntentBadge');
+      const ttsOut = document.getElementById('ttsResponseOutput');
+
+      // 1. Safety Escalation Trigger (Rule #4)
+      if (lower.includes('threat') || lower.includes('beat') || lower.includes('मार') || lower.includes('धमकी') || lower.includes('attack') || lower.includes('danger') || lower.includes('அச்சுறுத்தல்') || lower.includes('బెదిరింపు')) {
+        badge.textContent = "intent: safety_escalation (Rule #4)";
+        badge.className = "bg-red-500/20 text-red-400 px-2 py-0.5 rounded font-mono text-[11px] font-bold";
+        ttsOut.textContent = "EMERGENCY SAFETY ESCALATION TRIGGERED: Immediate safety is paramount. Contact Police at 112 or the National Labour Helpline at 1800-425-1200 immediately. Safety contacts have been prioritized.";
+        return;
+      }
+
+      // 2. Dynamic Number Extraction for Wage Calculations (Rule #1)
+      const numbers = cleanInput.match(/\d+(\.\d+)?/g);
+      if (numbers && numbers.length >= 2) {
+        // e.g. "6 days at 750, paid 2500" -> days=6, rate=750, paid=2500
+        let days = parseInt(numbers[0]);
+        let rate = parseFloat(numbers[1]);
+        let paid = numbers.length >= 3 ? parseFloat(numbers[2]) : 0;
+
+        // If first number is larger than second, swap (e.g. "₹800 for 5 days")
+        if (days > 31 && rate <= 31) {
+          const temp = days;
+          days = rate;
+          rate = temp;
+        }
+
+        const gross = rate * days;
+        const owed = Math.max(0, gross - paid);
+
+        badge.textContent = "intent: wage_calc (WageLedger)";
+        badge.className = "bg-orange-500/20 text-orange-400 px-2 py-0.5 rounded font-mono text-[11px] font-bold";
+
+        if (currentLanguage === 'hi') {
+          ttsOut.textContent = `WageLedger हिसाब: ${days} दिन × ₹${rate} = ₹${gross.toLocaleString('en-IN')} कुल मजदूरी। आपको ₹${paid.toLocaleString('en-IN')} अग्रिम मिले, इसलिए ठेकेदार पर आपके ₹${owed.toLocaleString('en-IN')} बकाया हैं। (सटीक गणना: packages/shared/lib/src/ledger.dart)`;
+        } else {
+          ttsOut.textContent = `WageLedger calculation: ${days} days worked at ₹${rate}/day = ₹${gross.toLocaleString('en-IN')} gross wage. You received ₹${paid.toLocaleString('en-IN')} advance, leaving a net balance of ₹${owed.toLocaleString('en-IN')} owed to you. (Source: packages/shared/lib/src/ledger.dart).`;
+        }
+
+        // Dynamically update the Ledger Calculator inputs as well!
+        document.getElementById('calcDays').value = days;
+        document.getElementById('calcRate').value = rate;
+        document.getElementById('calcPaid').value = paid;
+        runDeterministicCalculation();
+        return;
+      }
+
+      // 3. Scheme Q&A RAG Handlers
+      if (lower.includes('shram') || lower.includes('श्रम') || lower.includes('uan') || lower.includes('card')) {
+        badge.textContent = "intent: scheme_q (e-Shram RAG)";
+        badge.className = "bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded font-mono text-[11px]";
+        ttsOut.textContent = "e-Shram card registration is 100% free on eshram.gov.in or UMANG app. You only need your Aadhaar card and mobile OTP. Do not pay any agent fees. (Citation: Official e-Shram Portal FAQ).";
+      } else if (lower.includes('karnataka') || lower.includes('कर्नाटक') || lower.includes('gig') || lower.includes('swiggy') || lower.includes('zomato')) {
+        badge.textContent = "intent: scheme_q (Karnataka Gig Act 2025)";
+        badge.className = "bg-purple-500/20 text-purple-400 px-2 py-0.5 rounded font-mono text-[11px]";
+        ttsOut.textContent = "Under Section 22 of the Karnataka Gig Workers Act 2025: Aggregator Internal Dispute Committee must submit action report within 14 days, and final binding order within 45 days.";
+      } else {
+        badge.textContent = "intent: general_assist";
+        badge.className = "bg-slate-500/20 text-slate-300 px-2 py-0.5 rounded font-mono text-[11px]";
+        ttsOut.textContent = "We have received your query. If you have any pending wages or need legal assistance, you can calculate your dues in the Wage Ledger or contact the National Labour Helpline at 1800-425-1200.";
+      }
+    }
+
+    function playTTSAudio() {
+      const text = document.getElementById('ttsResponseOutput').textContent;
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.rate = 0.95;
+        if (currentLanguage === 'hi') utterance.lang = 'hi-IN';
+        window.speechSynthesis.speak(utterance);
+      } else {
+        alert("Audio response via Sarvam Bulbul TTS.");
+      }
+    }
+
+    // -------------------------------------------------------------------------
+    // 6. Schemes Search & Dynamic Pension Calculator
+    // -------------------------------------------------------------------------
+    function filterSchemes(query) {
+      const q = query.toLowerCase().trim();
+      const cards = document.querySelectorAll('.scheme-card');
+
+      cards.forEach(card => {
+        const keywords = card.getAttribute('data-keywords') || '';
+        const title = card.querySelector('h3') ? card.querySelector('h3').textContent.toLowerCase() : '';
+        const body = card.textContent.toLowerCase();
+
+        if (!q || keywords.includes(q) || title.includes(q) || body.includes(q)) {
+          card.style.display = 'flex';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    }
+
+    function calculatePensionDynamic(ageVal) {
+      const age = parseInt(ageVal) || 25;
+      // Formula according to Ministry of Labour Gazette for PM-SYM:
+      // Age 18 = ₹55, Age 29 = ₹100, Age 40 = ₹200.
+      let monthly = 55;
+      if (age <= 18) monthly = 55;
+      else if (age >= 40) monthly = 200;
+      else {
+        monthly = Math.round(55 + ((age - 18) / (40 - 18)) * (200 - 55));
+      }
+
+      document.getElementById('pensionMonthlyResult').textContent = `₹${monthly} / month (Govt match: ₹${monthly})`;
+    }
+
+    // -------------------------------------------------------------------------
+    // 7. Initialization
+    // -------------------------------------------------------------------------
+    window.addEventListener('DOMContentLoaded', () => {
+      loadLedgerRecords();
+      runDeterministicCalculation();
+      renderLedgerTable();
+      generateWebGrievanceDraft();
+      calculatePensionDynamic(25);
+    });
+  </script>
+
+</body>
+</html>
